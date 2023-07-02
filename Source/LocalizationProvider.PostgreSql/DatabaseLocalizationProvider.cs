@@ -4,18 +4,18 @@ namespace LocalizationProvider.PostgreSql;
 
 public sealed class DatabaseLocalizationProvider : ILocalizedResourceProvider, IDisposable
 {
-    private readonly string _applicationId;
+    private readonly Guid _applicationId;
     private readonly ResourceDbContext _dbContext;
     private static readonly ConcurrentDictionary<ResourceKey, object?> _resources = new();
     private bool _isDisposed;
 
-    public DatabaseLocalizationProvider(IServiceProvider serviceProvider, string applicationId)
+    public DatabaseLocalizationProvider(IServiceProvider serviceProvider, Guid applicationId)
     {
         _applicationId = applicationId;
         _dbContext = serviceProvider.GetRequiredService<ResourceDbContext>();
     }
 
-    public static ILocalizedResourceProvider Create(IServiceProvider serviceProvider, string applicationId)
+    public static ILocalizedResourceProvider Create(IServiceProvider serviceProvider, Guid applicationId)
         => new DatabaseLocalizationProvider(serviceProvider, applicationId);
     public string GetDateTimeFormat(string culture, DateTimeFormat dateTimeFormat) => throw new NotImplementedException();
 
