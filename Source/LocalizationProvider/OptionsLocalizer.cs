@@ -15,8 +15,7 @@ public sealed class OptionsLocalizer : IOptionsLocalizer
         => _provider.GetLocalizedOptionOrDefault(_culture, category, index);
 
     public string[] this[string category]
-        => _provider.GetLocalizedOptions(_culture, category);
+        => _provider.GetLocalizedList(_culture, category);
 
     public string[] GetCategories() => throw new NotImplementedException();
 }
-

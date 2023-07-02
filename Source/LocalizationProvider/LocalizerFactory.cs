@@ -1,32 +1,30 @@
-﻿using System.Collections.Concurrent;
+﻿using static LocalizationProvider.Models.LocalizerType;
 
 namespace LocalizationProvider;
 
-public sealed class LocalizerFactory : ILocalizerFactory
-{
+public sealed class LocalizerFactory
+    : ILocalizerFactory {
     private readonly ILocalizedResourceProvider _provider;
-    private static readonly ConcurrentDictionary<LocalizerType, ConcurrentDictionary<string, ILocalizer>> _localizers = new();
+    private static readonly ConcurrentDictionary<LocalizerKey, ILocalizer> _localizers = new();
 
     public LocalizerFactory(ILocalizedResourceProvider provider)
     {
         _provider = provider;
     }
 
-    public IStringLocalizer CreateStringLocalizer(string culture)
-        => (StringLocalizer)GetOrAddLocalizer(LocalizerType.String, culture);
+    public ITextLocalizer CreateStringLocalizer(string culture)
+        => (TextLocalizer)GetOrAddLocalizer(new(Text, culture));
 
     public IOptionsLocalizer CreateOptionsLocalizer(string culture)
-        => (OptionsLocalizer)GetOrAddLocalizer(LocalizerType.Options, culture);
+        => (OptionsLocalizer)GetOrAddLocalizer(new(LocalizerType.Options, culture));
 
     public IImageLocalizer CreateImageLocalizer(string culture)
-        => (ImageLocalizer)GetOrAddLocalizer(LocalizerType.Image, culture);
+        => (ImageLocalizer)GetOrAddLocalizer(new(Image, culture));
 
-    private ILocalizer GetOrAddLocalizer(LocalizerType type, string culture)
-        => _localizers.GetOrAdd(type, _ => new())
-            .GetOrAdd(culture, _ => type switch
-            {
-                LocalizerType.String => new StringLocalizer(_provider, culture),
-                LocalizerType.Options => new OptionsLocalizer(_provider, culture),
-                _ => new ImageLocalizer(_provider, culture),
+    private ILocalizer GetOrAddLocalizer(LocalizerKey key)
+        => _localizers.GetOrAdd(key, k => k.Type switch {
+                Text => new TextLocalizer(_provider, k.Culture),
+                LocalizerType.Options => new OptionsLocalizer(_provider, k.Culture),
+                _ => new ImageLocalizer(_provider, k.Culture),
             });
 }

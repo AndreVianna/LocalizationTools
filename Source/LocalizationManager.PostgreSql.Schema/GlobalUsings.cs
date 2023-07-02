@@ -1,9 +1,7 @@
 // Global using directives
 
 global using System.Collections.Concurrent;
-
-global using LocalizationProvider.Contracts;
-global using LocalizationProvider.Extensions;
+global using System.ComponentModel.DataAnnotations;
 
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.DependencyInjection;
