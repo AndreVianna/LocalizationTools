@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Localization.PostgreSql.Schema\Localization.PostgreSql.Schema.csproj" />
-    <ProjectReference Include="..\LocalizationProvider\LocalizationProvider.csproj" />
+    <ProjectReference Include="..\LocalizationProvider.PostgreSql\LocalizationProvider.PostgreSql.csproj" />
+    <ProjectReference Include="..\LocalizationManager\LocalizationManager.csproj" />
   </ItemGroup>
 
 </Project>

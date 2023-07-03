@@ -1,4 +1,4 @@
-﻿namespace LocalizationProvider.Models;
+﻿namespace Localization.Models;
 
 internal enum LocalizerType {
     Text,

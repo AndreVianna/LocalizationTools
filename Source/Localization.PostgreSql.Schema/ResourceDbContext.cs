@@ -1,6 +1,6 @@
-﻿using LocalizationProvider.PostgreSql.Models;
+﻿using Localization.PostgreSql.Models;
 
-namespace LocalizationProvider.PostgreSql;
+namespace Localization.PostgreSql;
 
 public class ResourceDbContext : DbContext
 {
@@ -8,7 +8,7 @@ public class ResourceDbContext : DbContext
     public required DbSet<Text> Texts { get; set; }
     public required DbSet<Image> Images { get; set; }
     public required DbSet<List> Lists { get; set; }
-    public required DbSet<ListOption> ListOptions { get; set; }
+    public required DbSet<ListItem> ListOptions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         optionsBuilder.UseNpgsql();
@@ -20,12 +20,12 @@ public class ResourceDbContext : DbContext
                     .HasIndex(e => new {
                                   e.ApplicationId,
                                   e.Culture,
-                                  e.ResourceId
+                                  ResourceId = e.Key
                               })
                     .IsUnique();
         modelBuilder.Entity<Text>()
-                    .HasMany(e => e.OptionList)
-                    .WithOne(e => e.Option)
+                    .HasMany(e => e.ItemLists)
+                    .WithOne(e => e.Item)
                     .OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<Text>()
                     .HasOne(e => e.Application)
@@ -36,7 +36,7 @@ public class ResourceDbContext : DbContext
                     .HasIndex(e => new {
                          e.ApplicationId,
                          e.Culture,
-                         e.ResourceId
+                         ResourceId = e.Key
                      })
                     .IsUnique();
         modelBuilder.Entity<Image>()
@@ -48,11 +48,11 @@ public class ResourceDbContext : DbContext
                     .HasIndex(e => new {
                          e.ApplicationId,
                          e.Culture,
-                         e.ResourceId
+                         ResourceId = e.Key
                      })
                     .IsUnique();
         modelBuilder.Entity<List>()
-                    .HasMany(e => e.ListOptions)
+                    .HasMany(e => e.ListItems)
                     .WithOne(e => e.List)
                     .OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<List>()
@@ -60,12 +60,12 @@ public class ResourceDbContext : DbContext
                     .WithMany(a => a.Lists)
                     .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<ListOption>()
+        modelBuilder.Entity<ListItem>()
                     .HasKey(e => new {
                          e.ListId,
-                         e.OptionId
+                         OptionId = e.ItemId
                      });
-        modelBuilder.Entity<ListOption>()
+        modelBuilder.Entity<ListItem>()
                     .HasIndex(e => new {
                          e.ListId,
                          e.Index

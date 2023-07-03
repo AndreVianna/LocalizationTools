@@ -1,16 +1,18 @@
-﻿namespace LocalizationProvider;
+﻿using Localization.Contracts;
+
+namespace Localization;
 
 public class ImageLocalizer : IImageLocalizer
 {
-    private readonly ILocalizedResourceProvider _provider;
+    private readonly IResourceReader _reader;
     private readonly string _culture;
 
-    public ImageLocalizer(ILocalizedResourceProvider provider, string culture)
+    public ImageLocalizer(IResourceReader reader, string culture)
     {
-        _provider = provider;
+        _reader = reader;
         _culture = culture;
     }
 
     public Stream? this[string name]
-        => _provider.GetLocalizedImageOrDefault(_culture, name);
+        => _reader.For(_culture).GetImageOrDefault(name);
 }
