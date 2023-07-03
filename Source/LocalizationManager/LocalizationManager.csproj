@@ -4,7 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>Localization</RootNamespace>
+    <RootNamespace>LocalizationManager</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,10 +14,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Localization.Contracts\Localization.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
