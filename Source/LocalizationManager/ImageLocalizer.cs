@@ -1,18 +1,13 @@
 ﻿namespace LocalizationManager;
 
-public class ImageLocalizer : IImageLocalizer
+internal class ImageLocalizer
+    : Localizer<ImageLocalizer>,
+    IImageLocalizer
 {
-    private readonly ILocalizationReader _reader;
+    internal ImageLocalizer(ILocalizationProvider provider, string culture, ILogger<ImageLocalizer> logger)
+        : base(provider, culture, logger)
+    { }
 
-    public ImageLocalizer(ILocalizationProvider provider, string culture)
-    {
-        _reader = provider.For(culture);
-    }
-
-    public byte[]? this[string name] => _reader.GetImageOrDefault(name);
-
-    public Stream? GetAsStream(string name) {
-        var bytes = this[name];
-        return bytes is null ? null : new MemoryStream(bytes);
-    }
+    public byte[]? this[string imageId]
+        => GetLocalizedResource(imageId, LocalizerType.List, Array.Empty<byte>(), rdr => rdr.GetImageOrDefault(imageId))!;
 }

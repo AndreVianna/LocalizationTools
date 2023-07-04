@@ -1,7 +1,4 @@
-﻿using LocalizationManager.PostgreSql.Models;
-using LocalizationManager.PostgreSql.Schema;
-
-namespace LocalizationManager.PostgreSql;
+﻿namespace LocalizationManager.PostgreSql;
 
 public sealed class LocalizationManager : ILocalizationManager, IDisposable {
     private readonly Application _application;

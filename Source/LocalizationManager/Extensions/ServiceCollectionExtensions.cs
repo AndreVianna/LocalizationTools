@@ -1,15 +1,22 @@
 ﻿namespace LocalizationManager.Extensions;
 
-public static class ServiceCollectionExtensions {
-    public static IServiceCollection AddLocalizationManager<TManager>(this IServiceCollection services, Guid applicationId)
-        where TManager : class, ILocalizationManager {
-        services.AddScoped(serviceProvider => ManagerFactory.Create<TManager>(applicationId, serviceProvider));
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection AddLocalizationManager<TManager, TManagerOptions>(this IServiceCollection services)
+        where TManager : class, ILocalizationManager
+        where TManagerOptions : LocalizationOptions {
+        services.AddOptions<TManagerOptions>().ValidateDataAnnotations();
+        services.TryAddScoped<ILocalizationManager, TManager>();
         return services;
     }
 
-    public static IServiceCollection AddLocalizationProvider<TProvider>(this IServiceCollection services, Guid applicationId)
-        where TProvider : class, ILocalizationProvider {
-        services.AddSingleton<ILocalizerFactory>(serviceProvider => new LocalizerFactory(TProvider.CreateFor(applicationId, serviceProvider)));
+    public static IServiceCollection AddLocalizationProvider<TProvider, TProviderOptions>(this IServiceCollection services)
+        where TProvider : class, ILocalizationProvider
+        where TProviderOptions : LocalizationOptions
+    {
+        services.AddOptions<TProviderOptions>().ValidateDataAnnotations();
+        services.TryAddSingleton<ILocalizationProvider, TProvider>();
+        services.TryAddSingleton<ILocalizerFactory, LocalizerFactory>();
         return services;
     }
 }

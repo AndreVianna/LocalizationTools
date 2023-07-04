@@ -3,16 +3,19 @@
 namespace LocalizationManager;
 
 public sealed class LocalizerFactory
-    : ILocalizerFactory {
+    : ILocalizerFactory
+{
     private readonly ILocalizationProvider _provider;
+    private readonly ILoggerFactory _loggerFactory;
     private readonly ConcurrentDictionary<LocalizerKey, ILocalizer> _localizers = new();
 
-    public LocalizerFactory(ILocalizationProvider provider)
+    public LocalizerFactory(IServiceProvider serviceProvider)
     {
-        _provider = provider;
+        _provider = serviceProvider.GetRequiredService<ILocalizationProvider>();
+        _loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
     }
 
-    public ITextLocalizer CreateStringLocalizer(string culture)
+    public ITextLocalizer CreateTextLocalizer(string culture)
         => (TextLocalizer)GetOrAddLocalizer(new(Text, culture));
 
     public IListLocalizer CreateListLocalizer(string culture)
@@ -22,9 +25,10 @@ public sealed class LocalizerFactory
         => (ImageLocalizer)GetOrAddLocalizer(new(Image, culture));
 
     private ILocalizer GetOrAddLocalizer(LocalizerKey key)
-        => _localizers.GetOrAdd(key, k => k.Type switch {
-                Text => new TextLocalizer(_provider, k.Culture),
-                List => new ListLocalizer(_provider, k.Culture),
-                _ => new ImageLocalizer(_provider, k.Culture),
-            });
+        => _localizers.GetOrAdd(key, k => k.Type switch
+        {
+            Text => new TextLocalizer(_provider, k.Culture, _loggerFactory.CreateLogger<TextLocalizer>()),
+            List => new ListLocalizer(_provider, k.Culture, _loggerFactory.CreateLogger<ListLocalizer>()),
+            _ => new ImageLocalizer(_provider, k.Culture, _loggerFactory.CreateLogger<ImageLocalizer>()),
+        });
 }

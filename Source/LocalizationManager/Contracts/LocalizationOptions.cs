@@ -1,5 +1,7 @@
 ﻿namespace LocalizationManager.Contracts;
 
-public record LocalizationOptions {
-    public DateTimeFormat DefaultDateTimeFormat { get; init; }
-}
+public record LocalizationOptions
+{
+    [Required]
+    public required Guid ApplicationId { get; init; }
+};

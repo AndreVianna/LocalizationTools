@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-builder.Services.AddPostgreSqlLocalizationProvider(Guid.NewGuid(), "SomeConnectionString");
+builder.Services.AddPostgreSqlLocalizationManager();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

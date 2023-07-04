@@ -1,6 +1,6 @@
 ﻿namespace LocalizationManager.Contracts;
 
-public interface ILocalizationProvider : ILocalizationReader {
-    static abstract ILocalizationProvider CreateFor(Guid applicationId, IServiceProvider serviceProvider);
+public interface ILocalizationProvider : ILocalizationReader
+{
     ILocalizationReader For(string culture);
 }

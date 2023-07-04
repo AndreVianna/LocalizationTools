@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-using DateTimeFormat = System.Runtime.Serialization.DateTimeFormat;
+﻿using DateTimeFormat = System.Runtime.Serialization.DateTimeFormat;
 
 namespace LocalizationManager.Models;
 

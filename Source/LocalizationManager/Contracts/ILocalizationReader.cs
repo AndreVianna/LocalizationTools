@@ -1,6 +1,9 @@
 ﻿namespace LocalizationManager.Contracts;
 
-public interface ILocalizationReader {
+public interface ILocalizationReader
+{
+    public const string NumberFormatPatternResourceKey = "NumberFormat.NumberPattern";
+
     string? GetTextOrDefault(string textKey);
     string[] GetLists();
     string[]? GetListItemsOrDefault(string listKey);

@@ -1,6 +1,7 @@
 ﻿namespace LocalizationManager.PostgreSql.Schema;
 
-public class Application {
+public class Application
+{
     public required Guid Id { get; set; }
     public required string Name { get; set; }
     public required string DefaultCulture { get; set; }
