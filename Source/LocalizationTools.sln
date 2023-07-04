@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationManager", "LocalizationManager\LocalizationManager.csproj", "{27C8047B-C1CE-4ECC-B734-BAA028F7EE8E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationManager.PostgreSql", "LocalizationManager.PostgreSql\LocalizationManager.PostgreSql.csproj", "{DA883042-FB70-4BD3-837C-717DD053625B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalizationManager.PostgreSql", "LocalizationManager.PostgreSql\LocalizationManager.PostgreSql.csproj", "{C00675C0-0252-4B64-9B5C-C9F4397DC6F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +37,10 @@ Global
 		{27C8047B-C1CE-4ECC-B734-BAA028F7EE8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27C8047B-C1CE-4ECC-B734-BAA028F7EE8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27C8047B-C1CE-4ECC-B734-BAA028F7EE8E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DA883042-FB70-4BD3-837C-717DD053625B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DA883042-FB70-4BD3-837C-717DD053625B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DA883042-FB70-4BD3-837C-717DD053625B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DA883042-FB70-4BD3-837C-717DD053625B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C00675C0-0252-4B64-9B5C-C9F4397DC6F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C00675C0-0252-4B64-9B5C-C9F4397DC6F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C00675C0-0252-4B64-9B5C-C9F4397DC6F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C00675C0-0252-4B64-9B5C-C9F4397DC6F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

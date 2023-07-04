@@ -1,9 +1,6 @@
 ﻿namespace LocalizationManager.Contracts;
 
-public interface IResourceReader {
-    static abstract IResourceReader CreateFor(Guid applicationId, IServiceProvider services);
-    IResourceReader For(string culture);
-
+public interface ILocalizationReader {
     string? GetTextOrDefault(string textKey);
     string[] GetLists();
     string[]? GetListItemsOrDefault(string listKey);

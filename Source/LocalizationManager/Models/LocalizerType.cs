@@ -2,6 +2,6 @@
 
 internal enum LocalizerType {
     Text,
-    Options,
+    List,
     Image,
 }

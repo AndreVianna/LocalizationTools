@@ -2,6 +2,6 @@
 
 public interface ILocalizerFactory {
     ITextLocalizer CreateStringLocalizer(string culture);
-    IOptionsLocalizer CreateOptionsLocalizer(string culture);
+    IListLocalizer CreateListLocalizer(string culture);
     IImageLocalizer CreateImageLocalizer(string culture);
 }

@@ -1,30 +1,26 @@
-﻿using LocalizationManager.Contracts;
-
-namespace LocalizationManager;
+﻿namespace LocalizationManager;
 
 public sealed class TextLocalizer : ITextLocalizer
 {
-    private readonly IResourceReader _reader;
-    private readonly string _culture;
+    private readonly ILocalizationReader _reader;
 
-    internal TextLocalizer(IResourceReader reader, string culture)
+    internal TextLocalizer(ILocalizationProvider provider, string culture)
     {
-        _reader = reader;
-        _culture = culture;
+        _reader = provider.For(culture);
     }
 
     public string this[string textId]
-        => _reader.For(_culture).GetTextOrDefault(textId) ?? textId;
+        => _reader.GetTextOrDefault(textId) ?? textId;
 
     public string this[string templateId, params object[] arguments]
-        => string.Format(_reader.For(_culture).GetTextOrDefault(templateId) ?? templateId, arguments);
+        => string.Format(_reader.GetTextOrDefault(templateId) ?? templateId, arguments);
 
     public string this[DateTime dateTime, DateTimeFormat format]
-        => dateTime.ToString(_reader.For(_culture).GetDateTimeFormat(format));
+        => dateTime.ToString(_reader.GetDateTimeFormat(format));
 
     public string this[int number, int integerDigits = 1]
-        => number.ToString(_reader.For(_culture).GetNumberFormat(0, integerDigits));
+        => number.ToString(_reader.GetNumberFormat(0, integerDigits));
 
     public string this[decimal number, int decimalPlaces = 2, int integerDigits = 1]
-        => number.ToString(_reader.For(_culture).GetNumberFormat(decimalPlaces, integerDigits));
+        => number.ToString(_reader.GetNumberFormat(decimalPlaces, integerDigits));
 }

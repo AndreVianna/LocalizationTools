@@ -1,4 +1,6 @@
-﻿namespace LocalizationManager.PostgreSql;
+﻿using LocalizationManager.PostgreSql.Schema;
+
+namespace LocalizationManager.PostgreSql;
 
 public class ResourceDbContext : DbContext
 {

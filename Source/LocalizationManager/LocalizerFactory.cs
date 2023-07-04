@@ -1,33 +1,30 @@
-﻿using LocalizationManager.Contracts;
-using LocalizationManager.Models;
-
-using static LocalizationManager.Models.LocalizerType;
+﻿using static LocalizationManager.Models.LocalizerType;
 
 namespace LocalizationManager;
 
 public sealed class LocalizerFactory
     : ILocalizerFactory {
-    private readonly IResourceReader _reader;
-    private static readonly ConcurrentDictionary<LocalizerKey, ILocalizer> _localizers = new();
+    private readonly ILocalizationProvider _provider;
+    private readonly ConcurrentDictionary<LocalizerKey, ILocalizer> _localizers = new();
 
-    public LocalizerFactory(IResourceReader reader)
+    public LocalizerFactory(ILocalizationProvider provider)
     {
-        _reader = reader;
+        _provider = provider;
     }
 
     public ITextLocalizer CreateStringLocalizer(string culture)
         => (TextLocalizer)GetOrAddLocalizer(new(Text, culture));
 
-    public IOptionsLocalizer CreateOptionsLocalizer(string culture)
-        => (ListLocalizer)GetOrAddLocalizer(new(LocalizerType.Options, culture));
+    public IListLocalizer CreateListLocalizer(string culture)
+        => (ListLocalizer)GetOrAddLocalizer(new(List, culture));
 
     public IImageLocalizer CreateImageLocalizer(string culture)
         => (ImageLocalizer)GetOrAddLocalizer(new(Image, culture));
 
     private ILocalizer GetOrAddLocalizer(LocalizerKey key)
         => _localizers.GetOrAdd(key, k => k.Type switch {
-                Text => new TextLocalizer(_reader, k.Culture),
-                LocalizerType.Options => new ListLocalizer(_reader, k.Culture),
-                _ => new ImageLocalizer(_reader, k.Culture),
+                Text => new TextLocalizer(_provider, k.Culture),
+                List => new ListLocalizer(_provider, k.Culture),
+                _ => new ImageLocalizer(_provider, k.Culture),
             });
 }

@@ -1,24 +1,20 @@
-﻿using LocalizationManager.Contracts;
+﻿namespace LocalizationManager;
 
-namespace LocalizationManager;
-
-public sealed class ListLocalizer : IOptionsLocalizer
+public sealed class ListLocalizer : IListLocalizer
 {
-    private readonly IResourceReader _reader;
-    private readonly string _culture;
+    private readonly ILocalizationReader _reader;
 
-    public ListLocalizer(IResourceReader reader, string culture)
+    public ListLocalizer(ILocalizationProvider provider, string culture)
     {
-        _reader = reader;
-        _culture = culture;
+        _reader = provider.For(culture);
     }
 
     public string? this[string listId, uint index]
-        => _reader.For(_culture).GetListItemOrDefault(listId, index);
+        => _reader.GetListItemOrDefault(listId, index);
 
     public string[] this[string listId]
-        => _reader.For(_culture).GetListItemsOrDefault(listId) ?? Array.Empty<string>();
+        => _reader.GetListItemsOrDefault(listId) ?? Array.Empty<string>();
 
     public string[] GetLists()
-        => _reader.For(_culture).GetLists();
+        => _reader.GetLists();
 }

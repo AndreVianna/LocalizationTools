@@ -1,19 +1,15 @@
-﻿using LocalizationManager.Contracts;
-
-namespace LocalizationManager;
+﻿namespace LocalizationManager;
 
 public class ImageLocalizer : IImageLocalizer
 {
-    private readonly IResourceReader _reader;
-    private readonly string _culture;
+    private readonly ILocalizationReader _reader;
 
-    public ImageLocalizer(IResourceReader reader, string culture)
+    public ImageLocalizer(ILocalizationProvider provider, string culture)
     {
-        _reader = reader;
-        _culture = culture;
+        _reader = provider.For(culture);
     }
 
-    public byte[]? this[string name] => _reader.For(_culture).GetImageOrDefault(name);
+    public byte[]? this[string name] => _reader.GetImageOrDefault(name);
 
     public Stream? GetAsStream(string name) {
         var bytes = this[name];
