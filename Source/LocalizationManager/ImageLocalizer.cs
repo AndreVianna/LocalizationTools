@@ -1,13 +1,13 @@
-﻿namespace LocalizationManager;
+﻿using LocalizationManager.Contracts;
+
+namespace LocalizationManager;
 
 internal class ImageLocalizer
     : Localizer<ImageLocalizer>,
-    IImageLocalizer
-{
+    IImageLocalizer {
     internal ImageLocalizer(ILocalizationProvider provider, string culture, ILogger<ImageLocalizer> logger)
-        : base(provider, culture, logger)
-    { }
+        : base(provider, culture, logger) { }
 
-    public byte[]? this[string imageId]
-        => GetLocalizedResource(imageId, LocalizerType.List, Array.Empty<byte>(), rdr => rdr.GetImageOrDefault(imageId))!;
+    public byte[]? this[string imageKey]
+        => GetResource(imageKey, ResourceType.List, rdr => rdr.GetImageOrDefault(imageKey)) ?? Array.Empty<byte>();
 }

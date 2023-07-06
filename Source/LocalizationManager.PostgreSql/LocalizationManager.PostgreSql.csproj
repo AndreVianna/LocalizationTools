@@ -19,4 +19,8 @@
     <ProjectReference Include="..\LocalizationManager\LocalizationManager.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyName).UnitTests" />
+  </ItemGroup>
+
 </Project>

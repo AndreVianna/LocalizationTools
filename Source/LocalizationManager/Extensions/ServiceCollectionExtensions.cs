@@ -1,7 +1,8 @@
-﻿namespace LocalizationManager.Extensions;
+﻿using LocalizationManager.Contracts;
 
-public static class ServiceCollectionExtensions
-{
+namespace LocalizationManager.Extensions;
+
+public static class ServiceCollectionExtensions {
     public static IServiceCollection AddLocalizationManager<TManager, TManagerOptions>(this IServiceCollection services)
         where TManager : class, ILocalizationManager
         where TManagerOptions : LocalizationOptions {
@@ -12,8 +13,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddLocalizationProvider<TProvider, TProviderOptions>(this IServiceCollection services)
         where TProvider : class, ILocalizationProvider
-        where TProviderOptions : LocalizationOptions
-    {
+        where TProviderOptions : LocalizationOptions {
         services.AddOptions<TProviderOptions>().ValidateDataAnnotations();
         services.TryAddSingleton<ILocalizationProvider, TProvider>();
         services.TryAddSingleton<ILocalizerFactory, LocalizerFactory>();

@@ -1,7 +1,6 @@
 ﻿namespace LocalizationManager.Contracts;
 
-public record LocalizationOptions
-{
+public record LocalizationOptions {
     [Required]
     public required Guid ApplicationId { get; init; }
 };

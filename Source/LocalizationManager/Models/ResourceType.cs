@@ -1,6 +1,6 @@
 ﻿namespace LocalizationManager.Models;
 
-public enum LocalizerType {
+public enum ResourceType {
     Text,
     List,
     Image,

@@ -1,5 +1,4 @@
 ﻿namespace LocalizationManager.Contracts;
 
-public interface ILocalizer
-{
+public interface ILocalizer {
 }

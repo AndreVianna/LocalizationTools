@@ -1,19 +1,19 @@
-﻿namespace LocalizationManager;
+﻿using LocalizationManager.Contracts;
+
+namespace LocalizationManager;
 
 internal sealed class ListLocalizer
     : Localizer<ListLocalizer>,
-    IListLocalizer
-{
+    IListLocalizer {
     internal ListLocalizer(ILocalizationProvider provider, string culture, ILogger<ListLocalizer> logger)
-        : base(provider, culture, logger)
-    { }
-    
-    public string? this[string listId, uint index]
-        => GetLocalizedResource(listId, LocalizerType.List, string.Empty , rdr => rdr.GetListItemOrDefault(listId, index))!;
+        : base(provider, culture, logger) { }
 
-    public string[] this[string listId]
-        => GetLocalizedResource(listId, LocalizerType.List, Array.Empty<string>(), rdr => rdr.GetListItemsOrDefault(listId))!;
+    public string this[string listKey, uint index]
+        => GetResource(listKey, ResourceType.List, rdr => rdr.GetListItem(listKey, index))!;
+
+    public string[] this[string listKey]
+        => GetResource(listKey, ResourceType.List, rdr => rdr.GetListItems(listKey)) ?? Array.Empty<string>();
 
     public string[] GetLists()
-        => GetLocalizedResource(Keys.AllListsKey, LocalizerType.List, Array.Empty<string>(), rdr => rdr.GetLists());
+        => GetResource(Keys.AllListsKey, ResourceType.List, rdr => rdr.GetLists()) ?? Array.Empty<string>();
 }
