@@ -1,6 +1,5 @@
 ﻿using LocalizationManager.Contracts;
-
-using static LocalizationManager.Models.ResourceType;
+using LocalizationManager.Models;
 
 namespace LocalizationManager;
 
@@ -10,9 +9,9 @@ public sealed class LocalizerFactory
     private readonly ILoggerFactory _loggerFactory;
     private readonly ConcurrentDictionary<LocalizerKey, ILocalizer> _localizers = new();
 
-    public LocalizerFactory(IServiceProvider serviceProvider) {
-        _provider = serviceProvider.GetRequiredService<ILocalizationProvider>();
-        _loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+    public LocalizerFactory(ILocalizationProvider provider, ILoggerFactory loggerFactory) {
+        _provider = provider;
+        _loggerFactory = loggerFactory;
     }
 
     public ITextLocalizer CreateTextLocalizer(string culture)

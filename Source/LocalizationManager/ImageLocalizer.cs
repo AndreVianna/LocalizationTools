@@ -1,4 +1,5 @@
 ﻿using LocalizationManager.Contracts;
+using LocalizationManager.Models;
 
 namespace LocalizationManager;
 
@@ -8,6 +9,9 @@ internal class ImageLocalizer
     internal ImageLocalizer(ILocalizationProvider provider, string culture, ILogger<ImageLocalizer> logger)
         : base(provider, culture, logger) { }
 
+    public LocalizedImage? GetLocalizedImage(string imageKey)
+        => GetResourceOrDefault(imageKey, Image, rdr => rdr.FindImage(imageKey));
+
     public byte[]? this[string imageKey]
-        => GetResource(imageKey, ResourceType.List, rdr => rdr.GetImageOrDefault(imageKey)) ?? Array.Empty<byte>();
+        => GetLocalizedImage(imageKey)?.Bytes;
 }

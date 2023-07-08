@@ -1,7 +1,9 @@
-﻿namespace LocalizationManager.Contracts;
+﻿using LocalizationManager.Models;
+
+namespace LocalizationManager.Contracts;
 
 public interface ITextLocalizer : ILocalizer {
-    string this[string textId] { get; }
+    LocalizedText? GetLocalizedText(string textKey);
     string this[string templateId, params object[] arguments] { get; }
     string this[DateTime dateTime, DateTimeFormat format = DateTimeFormat.DefaultDateTimePattern] { get; }
     string this[decimal number, NumberFormat format, int decimalPlaces = 2] { get; }

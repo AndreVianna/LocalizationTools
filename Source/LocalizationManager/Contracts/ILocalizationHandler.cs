@@ -1,4 +1,6 @@
-﻿namespace LocalizationManager.Contracts;
+﻿using LocalizationManager.Models;
+
+namespace LocalizationManager.Contracts;
 
 public interface ILocalizationHandler : ILocalizationReader {
     void SetText(LocalizedText input);

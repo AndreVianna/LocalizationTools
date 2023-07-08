@@ -1,9 +1,10 @@
-﻿namespace LocalizationManager.PostgreSql;
+﻿using System.Text.Json;
+
+namespace LocalizationManager.PostgreSql;
 
 public class LocalizationDbContext : DbContext {
     public LocalizationDbContext(DbContextOptions<LocalizationDbContext> options)
         : base(options) {
-
     }
 
     public required DbSet<Application> Applications { get; set; }
@@ -13,12 +14,17 @@ public class LocalizationDbContext : DbContext {
     public required DbSet<ListItem> ListItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        modelBuilder.Entity<Application>()
+            .HasIndex(e => new { e.Name, })
+            .IsUnique();
+        modelBuilder.Entity<Application>()
+            .Property(e => e.AvailableCultures)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
+                v => JsonSerializer.Deserialize<string[]>(v, JsonSerializerOptions.Default) ?? Array.Empty<string>());
+
         modelBuilder.Entity<Text>()
-                    .HasIndex(e => new {
-                        e.ApplicationId,
-                        e.Culture,
-                        ResourceId = e.Key
-                    })
+                    .HasIndex(e => new { e.ApplicationId, e.Culture, ResourceId = e.Key })
                     .IsUnique();
         modelBuilder.Entity<Text>()
                     .HasOne(e => e.Application)

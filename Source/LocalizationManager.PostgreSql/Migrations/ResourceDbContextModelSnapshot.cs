@@ -3,6 +3,7 @@ using System;
 
 using LocalizationManager.PostgreSql;
 
+using LocalizationProvider.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -10,217 +11,218 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace LocalizationManager.PostgreSql.Migrations; 
-
-[DbContext(typeof(LocalizationDbContext))]
-partial class LocalizationDbContextModelSnapshot : ModelSnapshot
+namespace LocalizationProvider.PostgreSql.Migrations
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    [DbContext(typeof(LocalizationDbContext))]
+    partial class ResourceDbContextModelSnapshot : ModelSnapshot
     {
+        protected override void BuildModel(ModelBuilder modelBuilder)
+        {
 #pragma warning disable 612, 618
-        modelBuilder
-            .HasAnnotation("ProductVersion", "7.0.8")
-            .HasAnnotation("Relational:MaxIdentifierLength", 63);
+            modelBuilder
+                .HasAnnotation("ProductVersion", "7.0.8")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-        modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.Application", b =>
-        {
-            b.Property<Guid>("Id")
-                .ValueGeneratedOnAdd()
-                .HasColumnType("uuid");
+            modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.Application", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
-            b.Property<string>("AvailableCultures")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("AvailableCultures")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.Property<string>("DefaultCulture")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("DefaultCulture")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.Property<string>("Name")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.HasKey("Id");
+                    b.HasKey("Id");
 
-            b.ToTable("Applications");
-        });
+                    b.ToTable("Applications");
+                });
 
-        modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.Image", b =>
-        {
-            b.Property<int>("Id")
-                .ValueGeneratedOnAdd()
-                .HasColumnType("integer");
+            modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.Image", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
 
-            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-            b.Property<Guid>("ApplicationId")
-                .HasColumnType("uuid");
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("uuid");
 
-            b.Property<byte[]>("Bytes")
-                .IsRequired()
-                .HasColumnType("bytea");
+                    b.Property<byte[]>("Bytes")
+                        .IsRequired()
+                        .HasColumnType("bytea");
 
-            b.Property<string>("Culture")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("Culture")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.Property<string>("Key")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.Property<string>("Label")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.HasKey("Id");
+                    b.HasKey("Id");
 
-            b.HasIndex("ApplicationId", "Culture", "Key")
-                .IsUnique();
+                    b.HasIndex("ApplicationId", "Culture", "Key")
+                        .IsUnique();
 
-            b.ToTable("Images");
-        });
+                    b.ToTable("Images");
+                });
 
-        modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.List", b =>
-        {
-            b.Property<int>("Id")
-                .ValueGeneratedOnAdd()
-                .HasColumnType("integer");
+            modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.List", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
 
-            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-            b.Property<Guid>("ApplicationId")
-                .HasColumnType("uuid");
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("uuid");
 
-            b.Property<string>("Culture")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("Culture")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.Property<string>("Key")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.Property<string>("Name")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.HasKey("Id");
+                    b.HasKey("Id");
 
-            b.HasIndex("ApplicationId", "Culture", "Key")
-                .IsUnique();
+                    b.HasIndex("ApplicationId", "Culture", "Key")
+                        .IsUnique();
 
-            b.ToTable("Lists");
-        });
+                    b.ToTable("Lists");
+                });
 
-        modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.ListItem", b =>
-        {
-            b.Property<int>("ListId")
-                .HasColumnType("integer");
+            modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.ListItem", b =>
+                {
+                    b.Property<int>("ListId")
+                        .HasColumnType("integer");
 
-            b.Property<int>("Index")
-                .HasColumnType("integer");
+                    b.Property<int>("Index")
+                        .HasColumnType("integer");
 
-            b.Property<string>("Value")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.HasKey("ListId", "Index");
+                    b.HasKey("ListId", "Index");
 
-            b.HasIndex("ListId", "Value")
-                .IsUnique();
+                    b.HasIndex("ListId", "Value")
+                        .IsUnique();
 
-            b.ToTable("ListItems");
-        });
+                    b.ToTable("ListItems");
+                });
 
-        modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.Text", b =>
-        {
-            b.Property<int>("Id")
-                .ValueGeneratedOnAdd()
-                .HasColumnType("integer");
+            modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.Text", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
 
-            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-            b.Property<Guid>("ApplicationId")
-                .HasColumnType("uuid");
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("uuid");
 
-            b.Property<string>("Culture")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("Culture")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.Property<string>("Key")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.Property<string>("Value")
-                .IsRequired()
-                .HasColumnType("text");
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-            b.HasKey("Id");
+                    b.HasKey("Id");
 
-            b.HasIndex("ApplicationId", "Culture", "Key")
-                .IsUnique();
+                    b.HasIndex("ApplicationId", "Culture", "Key")
+                        .IsUnique();
 
-            b.ToTable("Texts");
-        });
+                    b.ToTable("Texts");
+                });
 
-        modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.Image", b =>
-        {
-            b.HasOne("LocalizationProvider.PostgreSql.Schema.Application", "Application")
-                .WithMany("Images")
-                .HasForeignKey("ApplicationId")
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired();
+            modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.Image", b =>
+                {
+                    b.HasOne("LocalizationProvider.PostgreSql.Schema.Application", "Application")
+                        .WithMany("Images")
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-            b.Navigation("Application");
-        });
+                    b.Navigation("Application");
+                });
 
-        modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.List", b =>
-        {
-            b.HasOne("LocalizationProvider.PostgreSql.Schema.Application", "Application")
-                .WithMany("Lists")
-                .HasForeignKey("ApplicationId")
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired();
+            modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.List", b =>
+                {
+                    b.HasOne("LocalizationProvider.PostgreSql.Schema.Application", "Application")
+                        .WithMany("Lists")
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-            b.Navigation("Application");
-        });
+                    b.Navigation("Application");
+                });
 
-        modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.ListItem", b =>
-        {
-            b.HasOne("LocalizationProvider.PostgreSql.Schema.List", "List")
-                .WithMany("Items")
-                .HasForeignKey("ListId")
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired();
+            modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.ListItem", b =>
+                {
+                    b.HasOne("LocalizationProvider.PostgreSql.Schema.List", "List")
+                        .WithMany("Items")
+                        .HasForeignKey("ListId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-            b.Navigation("List");
-        });
+                    b.Navigation("List");
+                });
 
-        modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.Text", b =>
-        {
-            b.HasOne("LocalizationProvider.PostgreSql.Schema.Application", "Application")
-                .WithMany("Texts")
-                .HasForeignKey("ApplicationId")
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired();
+            modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.Text", b =>
+                {
+                    b.HasOne("LocalizationProvider.PostgreSql.Schema.Application", "Application")
+                        .WithMany("Texts")
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-            b.Navigation("Application");
-        });
+                    b.Navigation("Application");
+                });
 
-        modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.Application", b =>
-        {
-            b.Navigation("Images");
+            modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.Application", b =>
+                {
+                    b.Navigation("Images");
 
-            b.Navigation("Lists");
+                    b.Navigation("Lists");
 
-            b.Navigation("Texts");
-        });
+                    b.Navigation("Texts");
+                });
 
-        modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.List", b =>
-        {
-            b.Navigation("Items");
-        });
+            modelBuilder.Entity("LocalizationProvider.PostgreSql.Schema.List", b =>
+                {
+                    b.Navigation("Items");
+                });
 #pragma warning restore 612, 618
+        }
     }
 }

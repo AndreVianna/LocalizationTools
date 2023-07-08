@@ -6,6 +6,8 @@ using static LocalizationManager.Contracts.NumberFormat;
 namespace LocalizationManager.Contracts;
 
 public static class Keys {
+    public const string ListLabelKey = "(List.Label)";
+
     public const string AllListsKey = $"{nameof(Keys)}.{nameof(AllListsKey)}";
 
     public static string GetDateTimeFormatKey(DateTimeFormat dateTimeFormat) {

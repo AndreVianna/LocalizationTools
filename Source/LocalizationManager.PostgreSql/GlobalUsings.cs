@@ -7,6 +7,7 @@ global using System.Globalization;
 global using LocalizationManager.Contracts;
 global using LocalizationManager.Extensions;
 global using LocalizationManager.Models;
+global using LocalizationManager.PostgreSql.Extensions;
 global using LocalizationManager.PostgreSql.Models;
 global using LocalizationManager.PostgreSql.Schema;
 

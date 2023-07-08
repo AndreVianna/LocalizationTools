@@ -1,3 +1,3 @@
 ﻿namespace LocalizationManager.Models;
 
-public record struct LocalizedText(string Key, string Value);
+public record LocalizedText(string Key, string? Value);

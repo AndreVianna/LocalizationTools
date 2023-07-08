@@ -1,4 +1,5 @@
 ﻿using LocalizationManager.Contracts;
+using LocalizationManager.Models;
 
 namespace LocalizationManager;
 
@@ -13,7 +14,7 @@ internal abstract class Localizer<TLocalizer>
         _reader = provider.For(culture);
     }
 
-    protected TResult? GetResource<TResult>(string resourceKey, ResourceType resourceType, Func<ILocalizationReader, TResult> getLocalizedResult) {
+    protected TResult? GetResourceOrDefault<TResult>(string resourceKey, ResourceType resourceType, Func<ILocalizationReader, TResult> getLocalizedResult) {
         try {
             var result = getLocalizedResult(_reader);
             if (result is not null) {

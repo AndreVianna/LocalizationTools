@@ -1,5 +1,8 @@
-﻿namespace LocalizationManager.Contracts;
+﻿using LocalizationManager.Models;
+
+namespace LocalizationManager.Contracts;
 
 public interface IImageLocalizer : ILocalizer {
-    byte[]? this[string imageId] { get; }
+    LocalizedImage? GetLocalizedImage(string imageKey);
+    byte[]? this[string imageKey] { get; }
 }

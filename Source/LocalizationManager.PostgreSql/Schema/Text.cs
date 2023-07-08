@@ -1,5 +1,5 @@
 ﻿namespace LocalizationManager.PostgreSql.Schema;
 
 public class Text : Resource {
-    public required string Value { get; set; }
+    public string? Value { get; set; }
 }

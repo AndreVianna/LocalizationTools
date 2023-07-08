@@ -1,4 +1,6 @@
-using static LocalizationManager.Contracts.DateTimeFormat;
+using LocalizationManager.Contracts;
+using LocalizationManager.Models;
+using LocalizationManager.PostgreSql.Schema;
 
 namespace LocalizationManager.PostgreSql;
 
@@ -13,7 +15,7 @@ public class LocalizationProviderTests {
             Id = applicationId,
             DefaultCulture = "en-US",
             Name = "SomeApplication",
-            AvailableCultures = "en-US",
+            AvailableCultures = new[] { "en-CA", "fr-CA" },
         };
 
         _serviceCollection = new();
@@ -61,9 +63,9 @@ public class LocalizationProviderTests {
     }
 
     [Fact]
-    public void GetDateTimeFormat_ReturnsCorrectFormat_WhenResourceExists() {
+    public void FindText_DateTimeProviderFormat_ReturnsCorrectFormat_WhenResourceExists() {
         // Arrange
-        var key = Keys.GetDateTimeFormatKey(LongDateTimePattern);
+        var key = Keys.GetDateTimeFormatKey(DateTimeFormat.LongDateTimePattern);
         _dbContext.Texts
             .Add(new() {
                 Id = 1234,
@@ -76,14 +78,16 @@ public class LocalizationProviderTests {
         var provider = CreateProvider();
 
         // Act
-        var result = provider.GetDateTimeFormat(key);
+        var result = provider.FindText(key);
 
         // Assert
-        result.Should().Be("MMMM dd, yyyy");
+        var subject = result.Should().BeOfType<LocalizedText>().Subject;
+        subject.Key.Should().Be("dddd, dd MMMM yyyy HH:mm:ss");
+        subject.Value.Should().Be("MMMM dd, yyyy");
     }
 
     [Fact]
-    public void GetNumberFormat_ReturnsCorrectFormat_WhenResourceExists() {
+    public void FindText_ForNumberFormat_ReturnsCorrectFormat_WhenResourceExists() {
         // Arrange
         var key = Keys.GetNumberFormatKey(NumberFormat.CurrencyPattern, 3);
         _dbContext.Texts
@@ -92,32 +96,34 @@ public class LocalizationProviderTests {
                 Key = key,
                 ApplicationId = _application.Id,
                 Culture = "en-US",
-                Value = "c3",
+                Value = "0.000$",
             });
         _dbContext.SaveChanges();
         var provider = CreateProvider();
 
         // Act
-        var result = provider.GetNumberFormat(key);
+        var result = provider.FindText(key);
 
         // Assert
-        result.Should().Be("c3");
+        var subject = result.Should().BeOfType<LocalizedText>().Subject;
+        subject.Key.Should().Be("c3");
+        subject.Value.Should().Be("0.000$");
     }
 
     [Fact]
-    public void GetImageOrDefault_ReturnsNull_WhenImageNotFound() {
+    public void FindImage_ReturnsNull_WhenImageNotFound() {
         // Arrange
         var provider = CreateProvider();
 
         // Act
-        var result = provider.GetImageOrDefault("SomeImage");
+        var result = provider.FindImage("SomeImage");
 
         // Assert
         result.Should().BeNull();
     }
 
     [Fact]
-    public void GetImageOrDefault_ReturnsImageArray_WhenImageExists() {
+    public void FindImage_ReturnsImageByteArray_WhenImageExists() {
         // Arrange
         _dbContext.Images
             .Add(new() {
@@ -132,69 +138,12 @@ public class LocalizationProviderTests {
         var provider = CreateProvider();
 
         // Act
-        var result = provider.GetImageOrDefault("ImageKey");
+        var result = provider.FindImage("ImageKey");
 
         // Assert
-        result.Should().BeEquivalentTo(new byte[] { 1, 2, 3, 4 });
-    }
-
-    [Fact]
-    public void GetLists_ReturnsCorrectLists_WhenResourcesExist() {
-        // Arrange
-        _dbContext.Lists
-            .Add(new() {
-                Id = 1234,
-                Key = "List1Key",
-                ApplicationId = _application.Id,
-                Culture = "en-US",
-                Name = "Some list.",
-                Items = new List<ListItem>
-                {
-                    new() {
-                        ListId = 1234,
-                        Index = 0,
-                        Value = "Item 1",
-                    },
-                    new() {
-                        ListId = 1234,
-                        Index = 1,
-                        Value = "Item 2",
-                    },
-                    new() {
-                        ListId = 1234,
-                        Index = 2,
-                        Value = "Item 3",
-                    },
-                },
-            });
-        _dbContext.Lists
-            .Add(new() {
-                Id = 1235,
-                Key = "List2Key",
-                ApplicationId = _application.Id,
-                Culture = "en-US",
-                Name = "Some other list.",
-                Items = new List<ListItem>
-                {
-                    new() {
-                        ListId = 1235,
-                        Index = 0,
-                        Value = "Item 1",
-                    },
-                    new() {
-                        ListId = 1235,
-                        Index = 1,
-                        Value = "Item 3",
-                    },
-                },
-            });
-        _dbContext.SaveChanges();
-        var provider = CreateProvider();
-
-        // Act
-        var result = provider.GetLists();
-
-        // Assert
-        result.Should().HaveCount(2);
+        var subject = result.Should().BeOfType<LocalizedImage>().Subject;
+        subject.Label.Key.Should().Be("ImageKey");
+        subject.Label.Value.Should().Be("Some image.");
+        subject.Bytes.Should().BeEquivalentTo(new byte[] { 1, 2, 3, 4 });
     }
 }

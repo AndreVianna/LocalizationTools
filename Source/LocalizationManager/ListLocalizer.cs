@@ -1,4 +1,5 @@
 ﻿using LocalizationManager.Contracts;
+using LocalizationManager.Models;
 
 namespace LocalizationManager;
 
@@ -8,12 +9,28 @@ internal sealed class ListLocalizer
     internal ListLocalizer(ILocalizationProvider provider, string culture, ILogger<ListLocalizer> logger)
         : base(provider, culture, logger) { }
 
-    public string this[string listKey, uint index]
-        => GetResource(listKey, ResourceType.List, rdr => rdr.GetListItem(listKey, index))!;
+    public LocalizedList? GetLocalizedList(string lisKey)
+        => GetResourceOrDefault(lisKey, List, rdr
+                => rdr.FindList(lisKey));
+
+    public string this[string listKey, string itemKey]
+        => itemKey == Keys.ListLabelKey
+            ? GetListLabel(listKey)
+            : GetListItemByKey(listKey, itemKey);
 
     public string[] this[string listKey]
-        => GetResource(listKey, ResourceType.List, rdr => rdr.GetListItems(listKey)) ?? Array.Empty<string>();
+        => GetLocalizedList(listKey)?
+            .Items
+            .Select(i => i.Value ?? i.Key)
+            .ToArray() ?? Array.Empty<string>();
 
-    public string[] GetLists()
-        => GetResource(Keys.AllListsKey, ResourceType.List, rdr => rdr.GetLists()) ?? Array.Empty<string>();
+    private string GetListLabel(string listKey)
+        => GetLocalizedList(listKey)?
+            .Label.Value ?? listKey;
+
+    private string GetListItemByKey(string listKey, string itemKey)
+        => GetLocalizedList(listKey)?
+                .Items
+                .FirstOrDefault(i => i.Key == itemKey)?
+                .Value ?? itemKey;
 }
