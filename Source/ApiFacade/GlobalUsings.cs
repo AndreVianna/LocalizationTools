@@ -1,3 +1,3 @@
 global using System;
 
-global using LocalizationManager.PostgreSql.Extensions;
+global using LocalizationProvider.PostgreSql.Extensions;

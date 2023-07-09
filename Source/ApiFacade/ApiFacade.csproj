@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApiFacade.Contracts\ApiFacade.Contracts.csproj" />
-    <ProjectReference Include="..\LocalizationManager.PostgreSql\LocalizationManager.PostgreSql.csproj" />
+    <ProjectReference Include="..\LocalizationProvider.PostgreSql\LocalizationProvider.PostgreSql.csproj" />
   </ItemGroup>
 
   <ItemGroup>

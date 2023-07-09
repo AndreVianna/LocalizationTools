@@ -10,14 +10,24 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiFacade.Contracts", "ApiFacade.Contracts\ApiFacade.Contracts.csproj", "{A5FAAF05-7392-4B4F-B879-B837C967DFF0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A2501BF1-8090-4A9F-8D1F-FB6269DC65D6}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.runsettings = .runsettings
+		ExecuteCleanUp.cmd = ExecuteCleanUp.cmd
+		GenerateTestCoverageReport.cmd = GenerateTestCoverageReport.cmd
+		LocalizationTools.lutconfig = LocalizationTools.lutconfig
+		LocalizationTools.sln.DotSettings = LocalizationTools.sln.DotSettings
+	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationManager", "LocalizationManager\LocalizationManager.csproj", "{27C8047B-C1CE-4ECC-B734-BAA028F7EE8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationProvider", "LocalizationProvider\LocalizationProvider.csproj", "{27C8047B-C1CE-4ECC-B734-BAA028F7EE8E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationManager.PostgreSql", "LocalizationManager.PostgreSql\LocalizationManager.PostgreSql.csproj", "{C00675C0-0252-4B64-9B5C-C9F4397DC6F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationProvider.PostgreSql", "LocalizationProvider.PostgreSql\LocalizationProvider.PostgreSql.csproj", "{C00675C0-0252-4B64-9B5C-C9F4397DC6F6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationManager.UnitTests", "LocalizationManager.UnitTests\LocalizationManager.UnitTests.csproj", "{147E6BD3-6500-45CC-ADBD-008FBF3B43A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationProvider.UnitTests", "LocalizationProvider.UnitTests\LocalizationProvider.UnitTests.csproj", "{147E6BD3-6500-45CC-ADBD-008FBF3B43A9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationManager.PostgreSql.UnitTests", "LocalizationManager.PostgreSql.UnitTests\LocalizationManager.PostgreSql.UnitTests.csproj", "{4928FA8C-DD28-41FB-A650-F539B98A77DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationProvider.PostgreSql.UnitTests", "LocalizationProvider.PostgreSql.UnitTests\LocalizationProvider.PostgreSql.UnitTests.csproj", "{4928FA8C-DD28-41FB-A650-F539B98A77DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.UnitTests", "Common.UnitTests\Common.UnitTests.csproj", "{6A3501F1-E4E4-409F-9E3B-17AD2DA4B4E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +63,10 @@ Global
 		{4928FA8C-DD28-41FB-A650-F539B98A77DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4928FA8C-DD28-41FB-A650-F539B98A77DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4928FA8C-DD28-41FB-A650-F539B98A77DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A3501F1-E4E4-409F-9E3B-17AD2DA4B4E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A3501F1-E4E4-409F-9E3B-17AD2DA4B4E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A3501F1-E4E4-409F-9E3B-17AD2DA4B4E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A3501F1-E4E4-409F-9E3B-17AD2DA4B4E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
