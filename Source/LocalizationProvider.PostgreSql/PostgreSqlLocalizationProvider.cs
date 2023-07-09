@@ -41,43 +41,24 @@ public sealed class PostgreSqlLocalizationProvider : ILocalizationProvider, ILoc
         return this;
     }
 
-    public LocalizedImage? FindImage(string imageKey) => GetImageOrDefault(imageKey);
+    public LocalizedText? FindText(string textKey)
+        => GetResourceOrDefault<Text, LocalizedText>(textKey);
 
-    public LocalizedList? FindList(string listKey) => GetListOrDefault(listKey);
+    public LocalizedList? FindList(string listKey)
+        => GetResourceOrDefault<List, LocalizedList>(listKey);
 
-    public LocalizedText? FindText(string textKey) => GetTextOrDefault(textKey);
+    public LocalizedImage? FindImage(string imageKey)
+        => GetResourceOrDefault<Image, LocalizedImage>(imageKey);
 
-    private LocalizedText? GetTextOrDefault(string textKey) {
-        var key = new ResourceKey(_application.Id, _culture, textKey);
-        return _resources.Get(key, k => GetTextFromStorage(k)?.MapToLocalizedText());
+    private TResource? GetResourceOrDefault<TEntity, TResource>(string key)
+        where TEntity : Resource
+        where TResource : class {
+        var resourceKey = new ResourceKey(_application.Id, _culture, key);
+        return _resources.Get(resourceKey, k => GetFromStorage<TEntity>(k)?.MapTo<TEntity, TResource>());
     }
 
-    private Text? GetTextFromStorage(ResourceKey k)
-        => _dbContext.Texts
-                     .AsNoTracking()
-                     .FirstOrDefault(r => r.ApplicationId == k.ApplicationId
-                                       && r.Culture == k.Culture
-                                       && r.Key == k.ResourceId);
-
-    private LocalizedList? GetListOrDefault(string listKey) {
-        var key = new ResourceKey(_application.Id, _culture, listKey);
-        return _resources.Get(key, k => GetListFromStorage(k)?.MapToLocalizedList());
-    }
-
-    private List? GetListFromStorage(ResourceKey k)
-        => _dbContext.Lists
-                     .AsNoTracking()
-                     .FirstOrDefault(lo => lo.ApplicationId == k.ApplicationId
-                                        && lo.Culture == k.Culture
-                                        && lo.Key == k.ResourceId);
-
-    private LocalizedImage? GetImageOrDefault(string imageKey) {
-        var key = new ResourceKey(_application.Id, _culture, imageKey);
-        return _resources.Get(key, k => GetImageFromStorage(k)?.MapToLocalizedImage());
-    }
-
-    private Image? GetImageFromStorage(ResourceKey k)
-        => _dbContext.Images
+    private TEntity? GetFromStorage<TEntity>(ResourceKey k) where TEntity : Resource
+        => _dbContext.Set<TEntity>()
                      .AsNoTracking()
                      .FirstOrDefault(r => r.ApplicationId == k.ApplicationId
                                        && r.Culture == k.Culture

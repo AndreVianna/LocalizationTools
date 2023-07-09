@@ -1,15 +1,13 @@
-using LocalizationProvider.PostgreSql.Schema;
-
 using DateTimeFormat = LocalizationManager.Contracts.DateTimeFormat;
 
 namespace LocalizationProvider.PostgreSql;
 
-public class LocalizationManagerTests {
+public class PostgreSqlLocalizationProviderTests {
     private readonly ServiceCollection _serviceCollection;
     private readonly LocalizationDbContext _dbContext;
     private readonly Application _application;
 
-    public LocalizationManagerTests() {
+    public PostgreSqlLocalizationProviderTests() {
         var applicationId = Guid.NewGuid();
         _application = new() {
             Id = applicationId,
@@ -30,7 +28,7 @@ public class LocalizationManagerTests {
         _dbContext.SaveChanges();
     }
 
-    private LocalizationProvider.PostgreSql.PostgreSqlLocalizationProvider CreateManager(Guid? applicationId = null) {
+    private PostgreSqlLocalizationProvider CreateManager(Guid? applicationId = null) {
         _serviceCollection.AddSingleton<LocalizationOptions>(_ => new() { ApplicationId = applicationId ?? _application.Id });
         var serviceManager = _serviceCollection.BuildServiceProvider();
         return new(serviceManager);
