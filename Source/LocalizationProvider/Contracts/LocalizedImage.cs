@@ -1,3 +1,3 @@
-﻿namespace LocalizationManager.Contracts;
+﻿namespace LocalizationProvider.Contracts;
 
-public record LocalizedImage(LocalizedText Label, byte[]? Bytes);
+public record LocalizedImage(string Key, LocalizedText? Label, byte[] Bytes);

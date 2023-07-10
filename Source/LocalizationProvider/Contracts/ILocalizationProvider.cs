@@ -1,4 +1,4 @@
-﻿namespace LocalizationManager.Contracts;
+﻿namespace LocalizationProvider.Contracts;
 
 public interface ILocalizationProvider {
     ILocalizationReader ForReadOnly(string culture);

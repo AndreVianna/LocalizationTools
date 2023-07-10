@@ -1,4 +1,4 @@
-﻿namespace LocalizationManager.Contracts;
+﻿namespace LocalizationProvider.Contracts;
 
 public interface IListLocalizer : ILocalizer {
     LocalizedList? GetLocalizedList(string listKey);

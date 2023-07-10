@@ -1,7 +1,7 @@
-﻿namespace LocalizationManager.Contracts;
+﻿namespace LocalizationProvider.Contracts;
 
 public static class Keys {
-    public const string ListLabelKey = "(List.Label)";
+    public const string ListLabel = "(List.Label)";
 
     public const string AllListsKey = $"{nameof(Keys)}.{nameof(AllListsKey)}";
 

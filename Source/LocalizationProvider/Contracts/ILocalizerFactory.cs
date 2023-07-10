@@ -1,4 +1,4 @@
-﻿namespace LocalizationManager.Contracts;
+﻿namespace LocalizationProvider.Contracts;
 
 public interface ILocalizerFactory {
     ITextLocalizer CreateTextLocalizer(string culture);

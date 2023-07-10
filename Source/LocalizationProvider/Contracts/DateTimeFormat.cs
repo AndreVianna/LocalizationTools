@@ -1,4 +1,4 @@
-﻿namespace LocalizationManager.Contracts;
+﻿namespace LocalizationProvider.Contracts;
 
 public enum DateTimeFormat {
     DefaultDateTimePattern, // e.g. 1998-02-29 21:45:37.123456

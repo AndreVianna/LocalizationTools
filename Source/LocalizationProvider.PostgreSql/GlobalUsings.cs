@@ -5,10 +5,6 @@ global using System.ComponentModel.DataAnnotations;
 global using System.Globalization;
 global using System.Text.Json;
 
-global using LocalizationManager.Contracts;
-global using LocalizationManager.Extensions;
-global using LocalizationManager.Models;
-
 global using LocalizationProvider.PostgreSql.Extensions;
 global using LocalizationProvider.PostgreSql.Models;
 global using LocalizationProvider.PostgreSql.Schema;

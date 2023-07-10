@@ -1,4 +1,4 @@
-﻿namespace LocalizationManager.Models;
+﻿namespace LocalizationProvider.Models;
 
 internal enum ResourceType {
     Text,

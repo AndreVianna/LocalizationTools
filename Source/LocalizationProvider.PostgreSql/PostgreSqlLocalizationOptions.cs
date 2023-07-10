@@ -1,4 +1,6 @@
-﻿namespace LocalizationProvider.PostgreSql;
+﻿using LocalizationProvider.Contracts;
+
+namespace LocalizationProvider.PostgreSql;
 
 public record PostgreSqlLocalizationOptions : LocalizationOptions {
     [Required]

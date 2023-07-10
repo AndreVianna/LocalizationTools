@@ -1,4 +1,6 @@
-﻿namespace LocalizationManager;
+﻿using LocalizationProvider.Contracts;
+
+namespace LocalizationProvider;
 
 internal sealed class TextLocalizer
     : Localizer<TextLocalizer>,

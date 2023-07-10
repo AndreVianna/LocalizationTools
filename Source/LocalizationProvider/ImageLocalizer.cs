@@ -1,4 +1,6 @@
-﻿namespace LocalizationManager;
+﻿using LocalizationProvider.Contracts;
+
+namespace LocalizationProvider;
 
 internal class ImageLocalizer
     : Localizer<ImageLocalizer>,

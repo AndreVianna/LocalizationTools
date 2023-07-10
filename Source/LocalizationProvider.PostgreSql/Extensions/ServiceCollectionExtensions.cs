@@ -1,4 +1,6 @@
-﻿namespace LocalizationProvider.PostgreSql.Extensions;
+﻿using LocalizationProvider.Extensions;
+
+namespace LocalizationProvider.PostgreSql.Extensions;
 
 public static class ServiceCollectionExtensions {
     public static IServiceCollection AddPostgreSqlLocalizationProvider(this IServiceCollection services,

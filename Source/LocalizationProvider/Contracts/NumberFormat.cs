@@ -1,4 +1,4 @@
-﻿namespace LocalizationManager.Contracts;
+﻿namespace LocalizationProvider.Contracts;
 
 public enum NumberFormat {
     DefaultNumberPattern, // e.g.-12.345

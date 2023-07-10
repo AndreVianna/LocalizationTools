@@ -1,4 +1,6 @@
-using DateTimeFormat = LocalizationManager.Contracts.DateTimeFormat;
+using LocalizationProvider.Contracts;
+
+using DateTimeFormat = LocalizationProvider.Contracts.DateTimeFormat;
 
 namespace LocalizationProvider.PostgreSql;
 
@@ -122,6 +124,59 @@ public class PostgreSqlLocalizationProviderTests {
     }
 
     [Fact]
+    public void FindList_ReturnsNull_WhenListNotFound() {
+        // Arrange
+        var manager = CreateManager();
+
+        // Act
+        var result = manager.FindList("SomeList");
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public void FindList_ReturnsListItems_WhenListExists() {
+        // Arrange
+        _dbContext.Lists
+                  .Add(new() {
+                       Id = 1234,
+                       Key = "ListKey",
+                       ApplicationId = _application.Id,
+                       Culture = "en-US",
+                       Items = new[] {
+                           new ListItem {
+                               Index = 0,
+                               Text = new() {
+                                   ApplicationId = _application.Id,
+                                   Culture = "en-US",
+                                   Key = "Item1",
+                                   Value = "Item 1"
+                               },
+                           },
+                           new ListItem {
+                               Index = 1,
+                               Text = new() {
+                                   ApplicationId = _application.Id,
+                                   Culture = "en-US",
+                                   Key = "Item2",
+                                   Value = "Item 2"
+                               },
+                           },
+                       },
+                   });
+        _dbContext.SaveChanges();
+        var manager = CreateManager();
+
+        // Act
+        var result = manager.FindList("ListKey");
+
+        // Assert
+        var subject = result.Should().BeOfType<LocalizedList>().Subject;
+        subject.Items.Should().HaveCount(2);
+    }
+
+    [Fact]
     public void FindImage_ReturnsNull_WhenImageNotFound() {
         // Arrange
         var manager = CreateManager();
@@ -142,7 +197,6 @@ public class PostgreSqlLocalizationProviderTests {
                 Key = "ImageKey",
                 ApplicationId = _application.Id,
                 Culture = "en-US",
-                Label = "Some image.",
                 Bytes = new byte[] { 1, 2, 3, 4 },
             });
         _dbContext.SaveChanges();
@@ -153,8 +207,6 @@ public class PostgreSqlLocalizationProviderTests {
 
         // Assert
         var subject = result.Should().BeOfType<LocalizedImage>().Subject;
-        subject.Label.Key.Should().Be("ImageKey");
-        subject.Label.Value.Should().Be("Some image.");
         subject.Bytes.Should().BeEquivalentTo(new byte[] { 1, 2, 3, 4 });
     }
 }

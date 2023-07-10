@@ -6,9 +6,6 @@ global using System.Runtime.Serialization;
 
 global using FluentAssertions;
 
-global using LocalizationManager.Contracts;
-global using LocalizationManager.Models;
-
 global using LocalizationProvider.PostgreSql.Schema;
 
 global using Microsoft.EntityFrameworkCore;

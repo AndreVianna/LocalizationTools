@@ -1,4 +1,4 @@
-using LocalizationManager;
+using LocalizationProvider.Contracts;
 
 namespace LocalizationProvider;
 
@@ -10,7 +10,7 @@ public class TextLocalizerTests {
     public TextLocalizerTests() {
         var provider = Substitute.For<ILocalizationProvider>();
         _handler = Substitute.For<ILocalizationHandler>();
-        provider.ForUpdate(Arg.Any<string>()).Returns(_handler);
+        provider.ForReadOnly(Arg.Any<string>()).Returns(_handler);
         var loggerFactory = Substitute.For<ILoggerFactory>();
         _logger = Substitute.For<ILogger<TextLocalizer>>();
         loggerFactory.CreateLogger(Arg.Any<string>()).Returns(_logger);
@@ -22,7 +22,7 @@ public class TextLocalizerTests {
     [Fact]
     public void Indexer_WithTextKey_ReturnsExpectedText() {
         // Arrange
-        const string textKey = "test_text_id";
+        const string textKey = "text_key";
         var expectedText = new LocalizedText(textKey, "Hello, world!");
         _handler.FindText(Arg.Any<string>()).Returns(expectedText);
 
@@ -36,7 +36,7 @@ public class TextLocalizerTests {
     [Fact]
     public void Indexer_WithTextKey_WhenKeyNotFound_ReturnsTextKey_AndLogsWarning() {
         // Arrange
-        const string textKey = "test_text_id";
+        const string textKey = "text_key";
         _handler.FindText(Arg.Any<string>()).Returns(default(LocalizedText));
 
         // Act
@@ -44,13 +44,13 @@ public class TextLocalizerTests {
 
         // Assert
         result.Should().Be(textKey);
-        _logger.ShouldContainSingle(LogLevel.Warning, "Localized Text for 'test_text_id' not found.");
+        _logger.ShouldContainSingle(LogLevel.Warning, "Localized Text for 'text_key' not found.");
     }
 
     [Fact]
     public void Indexer_TemplateKey_ReturnsExpectedTemplate() {
         // Arrange
-        const string templateKey = "test_template_id";
+        const string templateKey = "template_key";
         const string expectedText = "Hello, John!";
         var expectedTemplate = new LocalizedText(templateKey, "Hello, {0}!");
         _handler.FindText(Arg.Any<string>()).Returns(expectedTemplate);

@@ -1,4 +1,4 @@
-﻿namespace LocalizationManager.Contracts;
+﻿namespace LocalizationProvider.Contracts;
 
 public interface ITextLocalizer : ILocalizer {
     LocalizedText? GetLocalizedText(string textKey);

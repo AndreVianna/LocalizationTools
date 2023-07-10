@@ -1,4 +1,7 @@
-﻿namespace LocalizationManager;
+﻿using LocalizationProvider.Contracts;
+using LocalizationProvider.Models;
+
+namespace LocalizationProvider;
 
 internal abstract class Localizer<TLocalizer>
     : ILocalizer

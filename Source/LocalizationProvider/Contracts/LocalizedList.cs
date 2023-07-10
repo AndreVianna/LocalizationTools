@@ -1,3 +1,3 @@
-﻿namespace LocalizationManager.Contracts;
+﻿namespace LocalizationProvider.Contracts;
 
-public record LocalizedList(LocalizedText Label, LocalizedText[] Items);
+public record LocalizedList(string Key, LocalizedText? Label, LocalizedText[] Items);

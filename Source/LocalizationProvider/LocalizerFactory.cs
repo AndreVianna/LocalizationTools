@@ -1,4 +1,7 @@
-﻿namespace LocalizationManager;
+﻿using LocalizationProvider.Contracts;
+using LocalizationProvider.Models;
+
+namespace LocalizationProvider;
 
 public sealed class LocalizerFactory
     : ILocalizerFactory {

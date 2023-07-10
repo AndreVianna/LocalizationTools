@@ -1,4 +1,6 @@
-﻿namespace LocalizationManager;
+﻿using LocalizationProvider.Contracts;
+
+namespace LocalizationProvider;
 
 internal sealed class ListLocalizer
     : Localizer<ListLocalizer>,
@@ -10,20 +12,22 @@ internal sealed class ListLocalizer
         => GetResourceOrDefault(lisKey, List, rdr
                 => rdr.FindList(lisKey));
 
+    public string[] this[string listKey]
+        => GetLocalizedList(listKey)?
+          .Items
+          .Select(i => i.Value ?? i.Key)
+          .ToArray() ?? Array.Empty<string>();
+
     public string this[string listKey, string itemKey]
-        => itemKey == Keys.ListLabelKey
+        => itemKey == Keys.ListLabel
             ? GetListLabel(listKey)
             : GetListItemByKey(listKey, itemKey);
 
-    public string[] this[string listKey]
-        => GetLocalizedList(listKey)?
-            .Items
-            .Select(i => i.Value ?? i.Key)
-            .ToArray() ?? Array.Empty<string>();
-
-    private string GetListLabel(string listKey)
-        => GetLocalizedList(listKey)?
-            .Label.Value ?? listKey;
+    private string GetListLabel(string listKey) {
+        var list = GetLocalizedList(listKey);
+        var label = list?.Label;
+        return label?.Value ?? label?.Key ?? listKey;
+    }
 
     private string GetListItemByKey(string listKey, string itemKey)
         => GetLocalizedList(listKey)?
