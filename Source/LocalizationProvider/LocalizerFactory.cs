@@ -1,5 +1,4 @@
-﻿using LocalizationProvider.Contracts;
-using LocalizationProvider.Models;
+﻿using static LocalizationProvider.Models.ResourceType;
 
 namespace LocalizationProvider;
 

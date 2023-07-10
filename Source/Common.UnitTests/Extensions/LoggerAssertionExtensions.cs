@@ -1,14 +1,23 @@
 ﻿namespace Common.UnitTests.Extensions;
 
 public static class LoggerAssertionExtensions {
+    public static ILoggerFactory CreateFactory(this ILogger logger) {
+        var loggerFactory = Substitute.For<ILoggerFactory>();
+        logger.IsEnabled(Arg.Any<LogLevel>()).Returns(true);
+        loggerFactory.CreateLogger(Arg.Any<string>()).Returns(logger);
+        return loggerFactory;
+    }
 
-    public static void ShouldContainSingle<TLogger>(this ILogger<TLogger> logger, LogLevel logLevel, string message, EventId eventId = default) {
-        var calls = logger.ReceivedCalls();
-        var call = calls.Should().HaveCount(1).And.Subject.First();
+    public static void ShouldContain<TType>(this ILogger<TType> logger, LogLevel level, string message, EventId eventId = default) {
+        var calls = logger.ReceivedCalls().ToArray();
+        calls.Should().Contain(l => Contains(l, level, message, eventId));
+    }
+
+    private static bool Contains(ICall call, LogLevel level, string message, EventId eventId) {
         var arguments = call.GetArguments();
-        arguments.Should().HaveCount(5);
-        arguments[0].Should().BeOfType<LogLevel>().And.Be(logLevel);
-        arguments[1].Should().BeOfType<EventId>().And.Be(eventId);
-        arguments[2]!.ToString().Should().Be(message);
+        return arguments.Length == 5
+               && arguments[0] is LogLevel ll && ll == level
+               && arguments[1] is EventId evt && evt == eventId
+               && arguments[2]?.ToString() == message;
     }
 }

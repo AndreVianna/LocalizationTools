@@ -1,6 +1,4 @@
-﻿using LocalizationProvider.Contracts;
-
-namespace LocalizationProvider.PostgreSql.Models;
+﻿namespace LocalizationProvider.PostgreSql.Models;
 
 internal static class Mapper {
     public static TOutput MapTo<TInput, TOutput>(this TInput input)

@@ -1,4 +1,4 @@
-﻿using LocalizationProvider.Contracts;
+﻿using static LocalizationProvider.Models.ResourceType;
 
 namespace LocalizationProvider;
 
@@ -9,8 +9,7 @@ internal sealed class ListLocalizer
         : base(reader, logger) { }
 
     public LocalizedList? GetLocalizedList(string lisKey)
-        => GetResourceOrDefault(lisKey, List, rdr
-                => rdr.FindList(lisKey));
+        => GetResourceOrDefault(lisKey, List, rdr => rdr.FindList(lisKey));
 
     public string[] this[string listKey]
         => GetLocalizedList(listKey)?
@@ -19,19 +18,18 @@ internal sealed class ListLocalizer
           .ToArray() ?? Array.Empty<string>();
 
     public string this[string listKey, string itemKey]
-        => itemKey == Keys.ListLabel
-            ? GetListLabel(listKey)
-            : GetListItemByKey(listKey, itemKey);
+        => GetListItem(listKey, itemKey);
 
-    private string GetListLabel(string listKey) {
-        var list = GetLocalizedList(listKey);
-        var label = list?.Label;
-        return label?.Value ?? label?.Key ?? listKey;
+    private string GetListItem(string listKey, string itemKey) {
+        var s = GetLocalizedList(listKey)?
+            .Items
+            .FirstOrDefault(i => i.Key == itemKey);
+
+        var v = s?.Value;
+        if (v is not null) {
+            return v;
+        }
+
+        return itemKey;
     }
-
-    private string GetListItemByKey(string listKey, string itemKey)
-        => GetLocalizedList(listKey)?
-                .Items
-                .FirstOrDefault(i => i.Key == itemKey)?
-                .Value ?? itemKey;
 }

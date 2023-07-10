@@ -140,11 +140,11 @@ public class PostgreSqlLocalizationProviderTests {
         // Arrange
         _dbContext.Lists
                   .Add(new() {
-                       Id = 1234,
-                       Key = "ListKey",
-                       ApplicationId = _application.Id,
-                       Culture = "en-US",
-                       Items = new[] {
+                      Id = 1234,
+                      Key = "ListKey",
+                      ApplicationId = _application.Id,
+                      Culture = "en-US",
+                      Items = new[] {
                            new ListItem {
                                Index = 0,
                                Text = new() {
@@ -164,7 +164,7 @@ public class PostgreSqlLocalizationProviderTests {
                                },
                            },
                        },
-                   });
+                  });
         _dbContext.SaveChanges();
         var manager = CreateManager();
 

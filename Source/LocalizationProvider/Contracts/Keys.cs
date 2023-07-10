@@ -1,10 +1,9 @@
-﻿namespace LocalizationProvider.Contracts;
+﻿using static LocalizationProvider.Contracts.DateTimeFormat;
+using static LocalizationProvider.Contracts.NumberFormat;
+
+namespace LocalizationProvider.Contracts;
 
 public static class Keys {
-    public const string ListLabel = "(List.Label)";
-
-    public const string AllListsKey = $"{nameof(Keys)}.{nameof(AllListsKey)}";
-
     public static string GetDateTimeFormatKey(DateTimeFormat dateTimeFormat) {
         var dtf = CultureInfo.InvariantCulture.DateTimeFormat;
         return dateTimeFormat switch {

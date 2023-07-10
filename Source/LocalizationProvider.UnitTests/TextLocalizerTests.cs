@@ -1,5 +1,3 @@
-using LocalizationProvider.Contracts;
-
 namespace LocalizationProvider;
 
 public class TextLocalizerTests {
@@ -11,11 +9,8 @@ public class TextLocalizerTests {
         var provider = Substitute.For<ILocalizationProvider>();
         _handler = Substitute.For<ILocalizationHandler>();
         provider.ForReadOnly(Arg.Any<string>()).Returns(_handler);
-        var loggerFactory = Substitute.For<ILoggerFactory>();
         _logger = Substitute.For<ILogger<TextLocalizer>>();
-        loggerFactory.CreateLogger(Arg.Any<string>()).Returns(_logger);
-
-        var factory = new LocalizerFactory(provider, loggerFactory);
+        var factory = new LocalizerFactory(provider, _logger.CreateFactory());
         _subject = factory.CreateTextLocalizer("en-US");
     }
 
@@ -44,7 +39,7 @@ public class TextLocalizerTests {
 
         // Assert
         result.Should().Be(textKey);
-        _logger.ShouldContainSingle(LogLevel.Warning, "Localized Text for 'text_key' not found.");
+        _logger.ShouldContain(LogLevel.Warning, "Localized Text for 'text_key' not found.");
     }
 
     [Fact]
@@ -63,12 +58,11 @@ public class TextLocalizerTests {
     }
 
     [Fact]
-    public void Indexer_DateTimeFormat_ReturnsExpectedFormattedValue() {
+    public void Indexer_DateTimeFormat_WithoutFormat_ReturnsExpectedFormattedValue_WithDefaultDateTimePattern() {
         // Arrange
         var dateTime = new DateTime(2021, 09, 23);
-        var expectedPattern = new LocalizedText(GetDateTimeFormatKey(DefaultDateTimePattern), "yyyy-MM-dd HH:mm:ss.ffffff");
-        var expectedFormattedValue = dateTime.ToString(expectedPattern.Value);
-        _handler.FindText(Arg.Any<string>()).Returns(expectedPattern);
+        var expectedFormattedValue = dateTime.ToString(GetDateTimeFormatKey(DefaultDateTimePattern));
+        _handler.FindText(Arg.Any<string>()).Returns(default(LocalizedText));
 
         // Act
         var result = _subject[dateTime];
@@ -77,17 +71,30 @@ public class TextLocalizerTests {
         result.Should().Be(expectedFormattedValue);
     }
 
-    [Fact]
-    public void Indexer_DateTimeFormat_WithFormat_ReturnsExpectedFormattedValue() {
+    [Theory]
+    [InlineData(DefaultDateTimePattern, true)]
+    [InlineData(LongDateTimePattern, true)]
+    [InlineData(ShortDateTimePattern, true)]
+    [InlineData(LongDatePattern, true)]
+    [InlineData(ShortDatePattern, true)]
+    [InlineData(LongTimePattern, true)]
+    [InlineData(ShortTimePattern, true)]
+    [InlineData(DefaultDateTimePattern, false)]
+    [InlineData(LongDateTimePattern, false)]
+    [InlineData(ShortDateTimePattern, false)]
+    [InlineData(LongDatePattern, false)]
+    [InlineData(ShortDatePattern, false)]
+    [InlineData(LongTimePattern, false)]
+    [InlineData(ShortTimePattern, false)]
+    public void Indexer_DateTimeFormat_ReturnsExpectedFormattedValue(DateTimeFormat format, bool useCustomFormat) {
         // Arrange
         var dateTime = new DateTime(2021, 09, 23);
-        const DateTimeFormat format = ShortDateTimePattern;
-        var expectedPattern = new LocalizedText(GetDateTimeFormatKey(format), "M/d/yyyy");
+        var expectedPattern = new LocalizedText(GetDateTimeFormatKey(format), useCustomFormat ? "M/d/yyyy" : GetDateTimeFormatKey(format));
         var expectedFormattedValue = dateTime.ToString(expectedPattern.Value);
         _handler.FindText(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
-        var result = _subject[dateTime, format];
+        var result = _subject[dateTime];
 
         // Assert
         result.Should().Be(expectedFormattedValue);
@@ -113,7 +120,7 @@ public class TextLocalizerTests {
         // Arrange
         const decimal number = -12.345m;
         var expectedPattern = new LocalizedText(GetNumberFormatKey(DefaultNumberPattern), "n4");
-        const string expectedFormattedValue = "-12.3450";
+        var expectedFormattedValue = number.ToString(expectedPattern.Value);
         _handler.FindText(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
@@ -123,31 +130,67 @@ public class TextLocalizerTests {
         result.Should().Be(expectedFormattedValue);
     }
 
-    [Fact]
-    public void Indexer_Decimal_WithFormat_ReturnsExpectedFormattedValue() {
+    [Theory]
+    [InlineData(DefaultNumberPattern, true)]
+    [InlineData(CurrencyPattern, true)]
+    [InlineData(PercentPattern, true)]
+    [InlineData(ExponentialPattern, true)]
+    [InlineData(DefaultNumberPattern, false)]
+    [InlineData(CurrencyPattern, false)]
+    [InlineData(PercentPattern, false)]
+    [InlineData(ExponentialPattern, false)]
+    public void Indexer_Decimal_WithFormat_ReturnsExpectedFormattedValue(NumberFormat format, bool useCustomFormat) {
         // Arrange
         const decimal number = -12.345m;
-        var expectedPattern = new LocalizedText(GetNumberFormatKey(PercentPattern), "p2");
-        const string expectedFormattedValue = "-1,234.50%";
+        var expectedPattern = new LocalizedText(GetNumberFormatKey(format), useCustomFormat ? "p2" : GetNumberFormatKey(format));
+        var expectedFormattedValue = number.ToString(expectedPattern.Value);
         _handler.FindText(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
-        var result = _subject[number, PercentPattern];
+        var result = _subject[number, format];
 
         // Assert
         result.Should().Be(expectedFormattedValue);
     }
 
-    [Fact]
-    public void Indexer_Decimal_WithFormat_AndDecimalPlaces_ReturnsExpectedFormattedValue() {
+    [Theory]
+    [InlineData(DefaultNumberPattern, 0)]
+    [InlineData(CurrencyPattern, 0)]
+    [InlineData(PercentPattern, 0)]
+    [InlineData(ExponentialPattern, 0)]
+    [InlineData(DefaultNumberPattern, 1)]
+    [InlineData(CurrencyPattern, 1)]
+    [InlineData(PercentPattern, 1)]
+    [InlineData(ExponentialPattern, 1)]
+    [InlineData(DefaultNumberPattern, 2)]
+    [InlineData(CurrencyPattern, 2)]
+    [InlineData(PercentPattern, 2)]
+    [InlineData(ExponentialPattern, 2)]
+    [InlineData(DefaultNumberPattern, 3)]
+    [InlineData(CurrencyPattern, 3)]
+    [InlineData(PercentPattern, 3)]
+    [InlineData(ExponentialPattern, 3)]
+    [InlineData(DefaultNumberPattern, 4)]
+    [InlineData(CurrencyPattern, 4)]
+    [InlineData(PercentPattern, 4)]
+    [InlineData(ExponentialPattern, 4)]
+    [InlineData(DefaultNumberPattern, 5)]
+    [InlineData(CurrencyPattern, 5)]
+    [InlineData(PercentPattern, 5)]
+    [InlineData(ExponentialPattern, 5)]
+    [InlineData(DefaultNumberPattern, 6)]
+    [InlineData(CurrencyPattern, 6)]
+    [InlineData(PercentPattern, 6)]
+    [InlineData(ExponentialPattern, 6)]
+    public void Indexer_Decimal_WithFormat_AndDecimalPlaces_ReturnsExpectedFormattedValue(NumberFormat format, int decimalPlaces) {
         // Arrange
         const decimal number = -12.345m;
-        var expectedPattern = new LocalizedText(GetNumberFormatKey(CurrencyPattern), "c4");
-        const string expectedFormattedValue = "-$12.3450";
+        var expectedPattern = new LocalizedText(GetNumberFormatKey(format), GetNumberFormatKey(CurrencyPattern));
+        var expectedFormattedValue = number.ToString(expectedPattern.Value);
         _handler.FindText(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
-        var result = _subject[number, CurrencyPattern, 4];
+        var result = _subject[number, format, decimalPlaces];
 
         // Assert
         result.Should().Be(expectedFormattedValue);
@@ -158,7 +201,7 @@ public class TextLocalizerTests {
         // Arrange
         const int number = -42;
         var expectedPattern = new LocalizedText(GetNumberFormatKey(DefaultNumberPattern), "n0");
-        const string expectedFormattedValue = "-42";
+        var expectedFormattedValue = number.ToString(expectedPattern.Value);
         _handler.FindText(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
@@ -168,16 +211,24 @@ public class TextLocalizerTests {
         result.Should().Be(expectedFormattedValue);
     }
 
-    [Fact]
-    public void Indexer_Integer_WithFormat_ReturnsExpectedFormattedValue() {
+    [Theory]
+    [InlineData(DefaultNumberPattern, true)]
+    [InlineData(CurrencyPattern, true)]
+    [InlineData(PercentPattern, true)]
+    [InlineData(ExponentialPattern, true)]
+    [InlineData(DefaultNumberPattern, false)]
+    [InlineData(CurrencyPattern, false)]
+    [InlineData(PercentPattern, false)]
+    [InlineData(ExponentialPattern, false)]
+    public void Indexer_Integer_WithFormat_ReturnsExpectedFormattedValue(NumberFormat format, bool useCustomFormat) {
         // Arrange
         const int number = -42;
-        var expectedPattern = new LocalizedText(GetNumberFormatKey(DefaultNumberPattern), "e0");
-        const string expectedFormattedValue = "-4e+001";
+        var expectedPattern = new LocalizedText(GetNumberFormatKey(format), useCustomFormat ? "n0" : GetNumberFormatKey(format));
+        var expectedFormattedValue = number.ToString(expectedPattern.Value);
         _handler.FindText(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
-        var result = _subject[number, ExponentialPattern];
+        var result = _subject[number, format];
 
         // Assert
         result.Should().Be(expectedFormattedValue);

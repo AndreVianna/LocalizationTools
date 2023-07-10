@@ -6,9 +6,14 @@ global using Common.UnitTests.Extensions;
 
 global using FluentAssertions;
 
+global using LocalizationProvider.Contracts;
+global using LocalizationProvider.Extensions;
+
+global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 
 global using NSubstitute;
+global using NSubstitute.ExceptionExtensions;
 
 global using Xunit;
 

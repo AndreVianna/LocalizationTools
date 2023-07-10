@@ -1,5 +1,3 @@
-using LocalizationProvider.Contracts;
-
 namespace LocalizationProvider;
 
 public class ImageLocalizerTests {
@@ -13,12 +11,12 @@ public class ImageLocalizerTests {
         provider.ForReadOnly(Arg.Any<string>()).Returns(_handler);
         var loggerFactory = Substitute.For<ILoggerFactory>();
         _logger = Substitute.For<ILogger<ImageLocalizer>>();
+        _logger.IsEnabled(Arg.Any<LogLevel>()).Returns(true);
         loggerFactory.CreateLogger(Arg.Any<string>()).Returns(_logger);
 
         var factory = new LocalizerFactory(provider, loggerFactory);
         _subject = factory.CreateImageLocalizer("en-US");
     }
-
 
     [Fact]
     public void Indexer_WithImageKey_ReturnsExpectedImage() {
@@ -45,12 +43,12 @@ public class ImageLocalizerTests {
 
         // Assert
         result.Should().BeNull();
-        _logger.ShouldContainSingle(LogLevel.Warning, "Localized Image for 'image_key' not found.");
+        _logger.ShouldContain(LogLevel.Warning, "Localized Image for 'image_key' not found.");
     }
 
     private static LocalizedImage CreateLocalizedImage() {
         var label = new LocalizedText("image_label", "Image Label");
         var bytes = new byte[] { 1, 2, 3, 4, };
-        return new LocalizedImage("image_key", label, bytes);
+        return new("image_key", label, bytes);
     }
 }

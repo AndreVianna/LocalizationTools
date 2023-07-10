@@ -1,5 +1,3 @@
-using LocalizationProvider.Contracts;
-
 namespace LocalizationProvider;
 
 public class ListLocalizerTests {
@@ -13,6 +11,7 @@ public class ListLocalizerTests {
         provider.ForReadOnly(Arg.Any<string>()).Returns(_handler);
         var loggerFactory = Substitute.For<ILoggerFactory>();
         _logger = Substitute.For<ILogger<ListLocalizer>>();
+        _logger.IsEnabled(Arg.Any<LogLevel>()).Returns(true);
         loggerFactory.CreateLogger(Arg.Any<string>()).Returns(_logger);
 
         var factory = new LocalizerFactory(provider, loggerFactory);
@@ -22,7 +21,8 @@ public class ListLocalizerTests {
     [Fact]
     public void Indexer_WithListKey_ReturnsExpectedList() {
         // Arrange
-        var list = CreateLocalizedList();
+        var label = new LocalizedText("label_key", "List Label");
+        var list = CreateLocalizedList(label);
         var expectedResult = list.Items.Select(i => i.Value ?? i.Key).ToArray();
         _handler.FindList(Arg.Any<string>()).Returns(list);
 
@@ -31,6 +31,20 @@ public class ListLocalizerTests {
 
         // Assert
         result.Should().BeEquivalentTo(expectedResult);
+    }
+
+    [Fact]
+    public void Indexer_WithFaultyReader_Throws_AndLogsError() {
+        // Arrange
+        const string listKey = "list_key";
+        _handler.FindList(Arg.Any<string>()).Throws(new InvalidOperationException("Some message."));
+
+        // Act
+        Action action = () => _ = _subject[listKey];
+
+        // Assert
+        action.Should().Throw<InvalidOperationException>().WithMessage("Some message.");
+        _logger.ShouldContain(LogLevel.Error, "An error has occurred while get localized List for 'list_key'.", new(default, nameof(Extensions.LoggerExtensions.LogFailToLoadResource)));
     }
 
     [Fact]
@@ -44,13 +58,14 @@ public class ListLocalizerTests {
 
         // Assert
         result.Should().BeEmpty();
-        _logger.ShouldContainSingle(LogLevel.Warning, "Localized List for 'list_key' not found.");
+        _logger.ShouldContain(LogLevel.Warning, "Localized List for 'list_key' not found.");
     }
 
     [Fact]
     public void Indexer_ListKey_AndItemKey_ReturnsItemValue() {
         // Arrange
-        var list = CreateLocalizedList();
+        var label = new LocalizedText("label_key", "List Label");
+        var list = CreateLocalizedList(label);
         _handler.FindList(Arg.Any<string>()).Returns(list);
 
         // Act
@@ -63,7 +78,8 @@ public class ListLocalizerTests {
     [Fact]
     public void Indexer_ListKey_AndItemKey_WhenItemHasNoValue_ReturnsItemKey() {
         // Arrange
-        var list = CreateLocalizedList();
+        var label = new LocalizedText("label_key", "List Label");
+        var list = CreateLocalizedList(label);
         _handler.FindList(Arg.Any<string>()).Returns(list);
 
         // Act
@@ -74,46 +90,25 @@ public class ListLocalizerTests {
     }
 
     [Fact]
-    public void Indexer_ListKey_AndLabelKey_ReturnsItemValue() {
+    public void Indexer_ListKey_AndItemKey_WhenListNotFound_ReturnsItemKey() {
         // Arrange
-        var list = CreateLocalizedList();
-        _handler.FindList(Arg.Any<string>()).Returns(list);
+        const string listKey = "list_key";
+        const string itemKey = "item_key";
+        _handler.FindList(Arg.Any<string>()).Returns(default(LocalizedList));
 
         // Act
-        var result = _subject[list.Key, Keys.ListLabel];
+        var result = _subject[listKey, itemKey];
 
         // Assert
-        result.Should().Be(list.Label!.Value);
+        result.Should().Be(itemKey);
     }
 
-
-    [Fact]
-    public void Indexer_ListKey_WhenDoNotHaveLabel_AndLabelKey_ReturnsItemValue() {
-        // Arrange
-        var list = CreateLocalizedListWithoutLabel();
-        _handler.FindList(Arg.Any<string>()).Returns(list);
-
-        // Act
-        var result = _subject[list.Key, Keys.ListLabel];
-
-        // Assert
-        result.Should().Be(list.Key);
-    }
-
-    private static LocalizedList CreateLocalizedList() {
-        var label = new LocalizedText("list_label", "List Label");
+    private static LocalizedList CreateLocalizedList(LocalizedText? label) {
         var items = new[] {
             new LocalizedText("item_1", "Item 1"),
             new LocalizedText("item_2", null)
         };
-        return new LocalizedList("list_key", label, items);
-    }
 
-    private static LocalizedList CreateLocalizedListWithoutLabel() {
-        var items = new[] {
-            new LocalizedText("item_1", "Item 1"),
-            new LocalizedText("item_2", "Item 2")
-        };
-        return new LocalizedList("list_key", null, items);
+        return new("list_key", label, items);
     }
 }

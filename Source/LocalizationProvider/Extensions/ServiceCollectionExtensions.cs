@@ -1,6 +1,4 @@
-﻿using LocalizationProvider.Contracts;
-
-namespace LocalizationProvider.Extensions;
+﻿namespace LocalizationProvider.Extensions;
 
 public static class ServiceCollectionExtensions {
     public static IServiceCollection AddLocalizationHandler<THandler, THandlerOptions>(this IServiceCollection services)

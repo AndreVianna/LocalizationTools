@@ -85,9 +85,9 @@ internal class LocalizationDbContext : DbContext {
                     .OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<ListItem>()
                     .HasIndex(e => new {
-                         e.ListId,
-                         e.TextId
-                     })
+                        e.ListId,
+                        e.TextId
+                    })
                     .IsUnique();
         modelBuilder.Entity<ListItem>()
                     .Navigation(e => e.Text)

@@ -1,6 +1,4 @@
-﻿using LocalizationProvider.Contracts;
-
-namespace LocalizationProvider.PostgreSql;
+﻿namespace LocalizationProvider.PostgreSql;
 
 public sealed class PostgreSqlLocalizationProvider : ILocalizationProvider, ILocalizationHandler, IDisposable {
     private readonly Application _application;
@@ -21,14 +19,18 @@ public sealed class PostgreSqlLocalizationProvider : ILocalizationProvider, ILoc
 
     private bool _isDisposed;
     public void Dispose() {
-        if (_isDisposed) return;
+        if (_isDisposed) {
+            return;
+        }
+
         _dbContext.Dispose();
         _isDisposed = true;
     }
 
     private void SetCulture(string culture) {
-        if (!_application.AvailableCultures.Contains(culture))
+        if (!_application.AvailableCultures.Contains(culture)) {
             throw new InvalidOperationException($"Culture '{culture}' is not available for application '{_application.Name}'.");
+        }
 
         _culture = culture;
     }
@@ -143,7 +145,9 @@ public sealed class PostgreSqlLocalizationProvider : ILocalizationProvider, ILoc
     }
 
     private Text? GetOrAddText(LocalizedText? input) {
-        if (input is null) return null;
+        if (input is null) {
+            return null;
+        }
 
         var text = _dbContext.Texts
                              .AsNoTracking()
@@ -151,8 +155,9 @@ public sealed class PostgreSqlLocalizationProvider : ILocalizationProvider, ILoc
                                                && r.Culture == _culture
                                                && r.Key == input.Key
                                                && r.Value == input.Value);
-        if (text is not null)
+        if (text is not null) {
             return text;
+        }
 
         text = input.MapTo(_application.Id, _culture);
         text.UpdateWith(input);

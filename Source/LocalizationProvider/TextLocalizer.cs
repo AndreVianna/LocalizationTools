@@ -1,4 +1,6 @@
-﻿using LocalizationProvider.Contracts;
+﻿using static LocalizationProvider.Contracts.DateTimeFormat;
+using static LocalizationProvider.Contracts.NumberFormat;
+using static LocalizationProvider.Models.ResourceType;
 
 namespace LocalizationProvider;
 

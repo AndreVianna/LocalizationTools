@@ -1,8 +1,6 @@
 // Global using directives
 
 global using System;
-global using System.Net.Mime;
-global using System.Runtime.Serialization;
 
 global using FluentAssertions;
 

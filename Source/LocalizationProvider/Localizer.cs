@@ -1,7 +1,4 @@
-﻿using LocalizationProvider.Contracts;
-using LocalizationProvider.Models;
-
-namespace LocalizationProvider;
+﻿namespace LocalizationProvider;
 
 internal abstract class Localizer<TLocalizer>
     : ILocalizer
@@ -21,12 +18,12 @@ internal abstract class Localizer<TLocalizer>
                 return result;
             }
 
-            _logger.LogWarning("Localized {resourceType} for '{resourceKey}' not found.", resourceType, resourceKey);
+            _logger.LogResourceNotFound(resourceType, resourceKey);
             return default;
         }
         catch (Exception ex) {
-            _logger.LogError(ex, "An error occurred while get localized {resourceType} for '{resourceKey}'.", resourceType, resourceKey);
-            return default;
+            _logger.LogFailToLoadResource(ex, resourceType, resourceKey);
+            throw;
         }
     }
 }
