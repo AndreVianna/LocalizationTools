@@ -44,7 +44,7 @@ public class ListLocalizerTests {
 
         // Assert
         action.Should().Throw<InvalidOperationException>().WithMessage("Some message.");
-        _logger.ShouldContain(LogLevel.Error, "An error has occurred while get localized List for 'list_key'.", new(default, nameof(Extensions.LoggerExtensions.LogFailToLoadResource)));
+        _logger.ShouldContain(LogLevel.Error, "An error has occurred while get localized List for 'list_key'.", new(2, nameof(Extensions.LoggerExtensions.LogFailToLoadResource)));
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class ListLocalizerTests {
 
         // Assert
         result.Should().BeEmpty();
-        _logger.ShouldContain(LogLevel.Warning, "Localized List for 'list_key' not found.");
+        _logger.ShouldContain(LogLevel.Warning, "Localized List for 'list_key' not found.", new(1, nameof(Extensions.LoggerExtensions.LogFailToLoadResource)));
     }
 
     [Fact]

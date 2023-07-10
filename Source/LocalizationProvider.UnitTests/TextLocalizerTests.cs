@@ -39,7 +39,7 @@ public class TextLocalizerTests {
 
         // Assert
         result.Should().Be(textKey);
-        _logger.ShouldContain(LogLevel.Warning, "Localized Text for 'text_key' not found.");
+        _logger.ShouldContain(LogLevel.Warning, "Localized Text for 'text_key' not found.", new(1, nameof(Extensions.LoggerExtensions.LogResourceNotFound)));
     }
 
     [Fact]

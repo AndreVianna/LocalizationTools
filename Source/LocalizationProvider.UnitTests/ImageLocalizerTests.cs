@@ -43,7 +43,7 @@ public class ImageLocalizerTests {
 
         // Assert
         result.Should().BeNull();
-        _logger.ShouldContain(LogLevel.Warning, "Localized Image for 'image_key' not found.");
+        _logger.ShouldContain(LogLevel.Warning, "Localized Image for 'image_key' not found.", new(1, nameof(Extensions.LoggerExtensions.LogResourceNotFound)));
     }
 
     private static LocalizedImage CreateLocalizedImage() {
