@@ -47,8 +47,7 @@ public class ImageLocalizerTests {
     }
 
     private static LocalizedImage CreateLocalizedImage() {
-        var label = new LocalizedText("image_label", "Image Label");
         var bytes = new byte[] { 1, 2, 3, 4, };
-        return new("image_key", label, bytes);
+        return new("image_key", bytes);
     }
 }

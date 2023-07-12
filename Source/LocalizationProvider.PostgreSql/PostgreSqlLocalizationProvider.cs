@@ -46,122 +46,77 @@ public sealed class PostgreSqlLocalizationProvider : ILocalizationProvider, ILoc
     }
 
     public LocalizedText? FindText(string textKey)
-        => GetResourceOrDefault<Text, LocalizedText>(textKey);
+        => GetOrDefault<Text, LocalizedText>(textKey);
 
     public LocalizedList? FindList(string listKey)
-        => GetResourceOrDefault<List, LocalizedList>(listKey);
+        => GetOrDefault<List, LocalizedList>(listKey);
 
     public LocalizedImage? FindImage(string imageKey)
-        => GetResourceOrDefault<Image, LocalizedImage>(imageKey);
+        => GetOrDefault<Image, LocalizedImage>(imageKey);
 
-    private TResource? GetResourceOrDefault<TEntity, TResource>(string key)
+    public void SetText(LocalizedText input)
+        => AddOrUpdate<Text, LocalizedText>(input);
+
+    public void SetList(LocalizedList input)
+        => AddOrUpdate<List, LocalizedList>(input);
+
+    public void SetImage(LocalizedImage input)
+        => AddOrUpdate<Image, LocalizedImage>(input);
+
+    private TResource? GetOrDefault<TEntity, TResource>(string key)
         where TEntity : Resource
         where TResource : class {
         var resourceKey = new ResourceKey(_application.Id, _culture, key);
-        return _resources.Get(resourceKey, rk => GetFromStorage<TEntity>(rk.ResourceId)?.MapTo<TEntity, TResource>());
+        return _resources.Get(resourceKey, rk => LoadAsReadOnly<TEntity>(rk.ResourceId)?.MapTo<TEntity, TResource>());
     }
 
-    private TEntity? GetFromStorage<TEntity>(string key) where TEntity : Resource
+    private void AddOrUpdate<TEntity, TInput>(TInput input)
+        where TEntity : Resource
+        where TInput : ILocalizedResource {
+        var entity = LoadForUpdate<TEntity>(input.Key);
+        if (entity is null) {
+            entity = input.MapTo<TInput, TEntity>(_application.Id, _culture, GetUpdatedText);
+            _dbContext.Set<TEntity>().Add(entity);
+            _dbContext.SaveChanges();
+        }
+        else {
+            entity.UpdateFrom(input, GetUpdatedText);
+        }
+
+        var resourceKey = new ResourceKey(_application.Id, _culture, input.Key);
+        _resources[resourceKey] = input;
+        _dbContext.SaveChanges();
+    }
+
+    private Text GetUpdatedText(LocalizedText input) {
+        var text = LoadForUpdate<Text>(input.Key);
+        if (text is not null) {
+            if (text.Value == input.Value) {
+                return text;
+            }
+
+            text.UpdateFrom(input, null!);
+            return text;
+        }
+
+        text = input.MapTo<LocalizedText, Text>(_application.Id, _culture, null!);
+        _dbContext.Texts.Add(text);
+        return text;
+    }
+
+    private TEntity? LoadAsReadOnly<TEntity>(string key)
+        where TEntity : Resource
         => _dbContext.Set<TEntity>()
                      .AsNoTracking()
                      .FirstOrDefault(r => r.ApplicationId == _application.Id
                                        && r.Culture == _culture
                                        && r.Key == key);
 
-    public void SetText(LocalizedText input) {
-        AddOrUpdateText(input);
-        _dbContext.SaveChanges();
-    }
+    private TEntity? LoadForUpdate<TEntity>(string key)
+        where TEntity : Resource
+        => _dbContext.Set<TEntity>()
+                     .FirstOrDefault(r => r.ApplicationId == _application.Id
+                                       && r.Culture == _culture
+                                       && r.Key == key);
 
-    public void SetList(LocalizedList input) {
-        AddOrUpdateList(input);
-        _dbContext.SaveChanges();
-    }
-
-    public void SetImage(LocalizedImage input) {
-        AddOrUpdateImage(input);
-        _dbContext.SaveChanges();
-    }
-
-    private void AddOrUpdateText(LocalizedText input) {
-        var text = _dbContext
-                  .Texts
-                  .FirstOrDefault(t => t.ApplicationId == _application.Id
-                                    && t.Culture == _culture
-                                    && t.Key == input.Key);
-
-        if (text is null) {
-            text = input.MapTo(_application.Id, _culture);
-            text.UpdateWith(input);
-            _dbContext.Texts.Add(text);
-        }
-        else {
-            text.UpdateWith(input);
-        }
-    }
-
-    private void AddOrUpdateList(LocalizedList input) {
-        var list = _dbContext
-                  .Lists
-                  .Include(i => i.Label)
-                  .Include(i => i.Items)
-                  .ThenInclude(i => i.Text)
-                  .FirstOrDefault(t => t.ApplicationId == _application.Id
-                                    && t.Culture == _culture
-                                    && t.Key == input.Key);
-
-        if (list is null) {
-            list = input.MapTo(_application.Id, _culture);
-            list.UpdateWith(input, GetOrAddText);
-            _dbContext.Lists.Add(list);
-        }
-        else {
-            list.UpdateWith(input, GetOrAddText);
-        }
-
-        list.Items.Clear();
-        for (var index = 0; index < input.Items.Length; index++) {
-            var item = GetOrAddText(input.Items[index])!;
-            list.Items.Add(item.MapTo(list, index));
-        }
-    }
-
-    private void AddOrUpdateImage(LocalizedImage input) {
-        var image = _dbContext
-                  .Images
-                  .Include(i => i.Label)
-                  .FirstOrDefault(t => t.ApplicationId == _application.Id
-                                     && t.Culture == _culture
-                                     && t.Key == input.Key);
-
-        if (image is null) {
-            image = input.MapTo(_application.Id, _culture);
-            image.UpdateWith(input, GetOrAddText);
-            _dbContext.Images.Add(image);
-        }
-        else {
-            image.UpdateWith(input, GetOrAddText);
-        }
-    }
-
-    private Text? GetOrAddText(LocalizedText? input) {
-        if (input is null) {
-            return null;
-        }
-
-        var text = _dbContext.Texts
-                             .AsNoTracking()
-                             .FirstOrDefault(r => r.ApplicationId == _application.Id
-                                               && r.Culture == _culture
-                                               && r.Key == input.Key
-                                               && r.Value == input.Value);
-        if (text is not null) {
-            return text;
-        }
-
-        text = input.MapTo(_application.Id, _culture);
-        text.UpdateWith(input);
-        _dbContext.Texts.Add(text);
-        return text;
-    }
 }

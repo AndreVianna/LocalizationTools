@@ -128,7 +128,7 @@ public sealed class PostgreSqlLocalizationProviderTests : IDisposable {
     [Fact]
     public void FindList_ReturnsListItems_WhenListExists() {
         // Arrange
-        SeedList("List_key", "label_key", "Some list", 2);
+        SeedList("List_key", 2);
 
         // Act
         var result = _provider.FindList("List_key");
@@ -150,7 +150,7 @@ public sealed class PostgreSqlLocalizationProviderTests : IDisposable {
     [Fact]
     public void FindImage_ReturnsImageByteArray_WhenImageExists() {
         // Arrange
-        SeedImage("image_key", "label_key", "Some image", new byte[] { 1, 2, 3, 4 });
+        SeedImage("image_key", new byte[] { 1, 2, 3, 4 });
 
         // Act
         var result = _provider.FindImage("image_key");
@@ -188,26 +188,29 @@ public sealed class PostgreSqlLocalizationProviderTests : IDisposable {
     [Fact]
     public void SetList_WhenListExists_UpdatesListValue() {
         // Arrange
-        SeedList("list_key", "label_key", "Old label", 2);
-        var input = new LocalizedList("list_key",
-                                      new("label_key", "New label"),
-                                      new[] { new LocalizedText("item1_key", "Item 1") });
+        SeedList("list_key", 2);
+        SeedText("item3_key", "Item 3");
+        var input = new LocalizedList("list_key", new[] {
+            new LocalizedText("item1_key", "Item 1"),
+            new LocalizedText("item2_key", "Item 20"),
+            new LocalizedText("item3_key", "Item 3"),
+            new LocalizedText("item4_key", "Item 4")
+        });
 
         // Act
         _provider.SetList(input);
 
         // Assert
-        var result = _provider.FindList("text_key");
+        var result = _provider.FindList("list_key");
         result.Should().NotBeNull();
-        result!.Label!.Value.Should().Be("New label");
-        result.Items.Should().HaveCount(1);
+        result!.Items.Should().HaveCount(4);
     }
 
     [Fact]
     public void SetImage_WhenImageExists_UpdatesImageValue() {
         // Arrange
-        SeedImage("image_key", "label_key", "Old label", new byte[] { 1, 2, 3, 4 });
-        var input = new LocalizedImage("image_key", new("label_key", "New label"), new byte[] { 5, 6, 7, 8 });
+        SeedImage("image_key", new byte[] { 1, 2, 3, 4 });
+        var input = new LocalizedImage("image_key", new byte[] { 5, 6, 7, 8 });
 
         // Act
         _provider.SetImage(input);
@@ -215,14 +218,12 @@ public sealed class PostgreSqlLocalizationProviderTests : IDisposable {
         // Assert
         var result = _provider.FindImage("image_key");
         result.Should().NotBeNull();
-        result!.Label!.Value.Should().Be("New label");
-        result.Bytes.Should().BeEquivalentTo(new byte[] { 5, 6, 7, 8 });
+        result!.Bytes.Should().BeEquivalentTo(new byte[] { 5, 6, 7, 8 });
     }
 
     [Fact]
     public void SetList_AddsLocalizedList() {
         var input = new LocalizedList("list_key",
-                                      new LocalizedText("label_key", "List Label"),
                                       new[] {
                                           new LocalizedText("item1_key", "Item 1"),
                                           new LocalizedText("item2_key", "Item 2"),
@@ -235,10 +236,9 @@ public sealed class PostgreSqlLocalizationProviderTests : IDisposable {
     }
 
     [Fact]
-    public void SetList_WhenSetExists_UpdateText() {
-        SeedText("list_key", "List Label");
+    public void SetList_WhenListExists_UpdateText() {
+        SeedText("list_key", "List Name");
         var input = new LocalizedList("list_key",
-                                      new LocalizedText("label_key", "List Label"),
                                       new[] {
                                           new LocalizedText("item1_key", "Item 1"),
                                           new LocalizedText("item2_key", "Item 2"),
@@ -253,7 +253,6 @@ public sealed class PostgreSqlLocalizationProviderTests : IDisposable {
     [Fact]
     public void SetImage_AddsLocalizedImage() {
         var input = new LocalizedImage("image_key",
-                                      new LocalizedText("label_key", "List Label"),
                                       new byte[] { 1, 2, 3, 4 });
         // Act
         _provider.SetImage(input);
@@ -265,7 +264,6 @@ public sealed class PostgreSqlLocalizationProviderTests : IDisposable {
     private void SeedText(string key, string value) {
         _dbContext.Texts
                   .Add(new() {
-                       Id = 1234,
                        Key = key,
                        ApplicationId = _application.Id,
                        Culture = "en-US",
@@ -274,20 +272,12 @@ public sealed class PostgreSqlLocalizationProviderTests : IDisposable {
         _dbContext.SaveChanges();
     }
 
-    private void SeedList(string key, string labelKey, string labelValue, int itemCount) {
+    private void SeedList(string key, int itemCount) {
         _dbContext.Lists
                   .Add(new() {
-                       Id = 1234,
                        Key = key,
                        ApplicationId = _application.Id,
                        Culture = "en-US",
-                       Label = new Text {
-                           Id = 1234,
-                           Key = labelKey,
-                           ApplicationId = _application.Id,
-                           Culture = "en-US",
-                           Value = labelValue,
-                       },
                        Items = Enumerable
                               .Range(0, itemCount)
                               .Select(i => new ListItem {
@@ -303,20 +293,12 @@ public sealed class PostgreSqlLocalizationProviderTests : IDisposable {
         _dbContext.SaveChanges();
     }
 
-    private void SeedImage(string key, string labelKey, string labelValue, byte[] bytes) {
+    private void SeedImage(string key, byte[] bytes) {
         _dbContext.Images
                   .Add(new() {
-                       Id = 1234,
                        Key = key,
                        ApplicationId = _application.Id,
                        Culture = "en-US",
-                       Label = new Text {
-                           Id = 1234,
-                           Key = labelKey,
-                           ApplicationId = _application.Id,
-                           Culture = "en-US",
-                           Value = labelValue,
-                       },
                        Bytes = bytes,
                    });
         _dbContext.SaveChanges();

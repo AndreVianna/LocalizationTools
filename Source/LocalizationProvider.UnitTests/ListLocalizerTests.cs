@@ -21,8 +21,7 @@ public class ListLocalizerTests {
     [Fact]
     public void Indexer_WithListKey_ReturnsExpectedList() {
         // Arrange
-        var label = new LocalizedText("label_key", "List Label");
-        var list = CreateLocalizedList(label);
+        var list = CreateLocalizedList();
         var expectedResult = list.Items.Select(i => i.Value ?? i.Key).ToArray();
         _handler.FindList(Arg.Any<string>()).Returns(list);
 
@@ -64,8 +63,7 @@ public class ListLocalizerTests {
     [Fact]
     public void Indexer_ListKey_AndItemKey_ReturnsItemValue() {
         // Arrange
-        var label = new LocalizedText("label_key", "List Label");
-        var list = CreateLocalizedList(label);
+        var list = CreateLocalizedList();
         _handler.FindList(Arg.Any<string>()).Returns(list);
 
         // Act
@@ -78,8 +76,7 @@ public class ListLocalizerTests {
     [Fact]
     public void Indexer_ListKey_AndItemKey_WhenItemHasNoValue_ReturnsItemKey() {
         // Arrange
-        var label = new LocalizedText("label_key", "List Label");
-        var list = CreateLocalizedList(label);
+        var list = CreateLocalizedList();
         _handler.FindList(Arg.Any<string>()).Returns(list);
 
         // Act
@@ -103,12 +100,12 @@ public class ListLocalizerTests {
         result.Should().Be(itemKey);
     }
 
-    private static LocalizedList CreateLocalizedList(LocalizedText? label) {
+    private static LocalizedList CreateLocalizedList() {
         var items = new[] {
             new LocalizedText("item_1", "Item 1"),
             new LocalizedText("item_2", null)
         };
 
-        return new("list_key", label, items);
+        return new("list_key", items);
     }
 }

@@ -41,11 +41,6 @@ internal class LocalizationDbContext : DbContext {
                     .WithMany(a => a.Images)
                     .IsRequired()
                     .OnDelete(DeleteBehavior.Restrict);
-        modelBuilder.Entity<Image>()
-                    .HasOne(e => e.Label)
-                    .WithMany()
-                    .IsRequired(false)
-                    .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<List>()
                     .HasIndex(e => new {
@@ -54,11 +49,6 @@ internal class LocalizationDbContext : DbContext {
                         ResourceId = e.Key
                     })
                     .IsUnique();
-        modelBuilder.Entity<List>()
-                    .HasOne(e => e.Label)
-                    .WithMany()
-                    .IsRequired(false)
-                    .OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<List>()
                     .HasOne(e => e.Application)
                     .WithMany(a => a.Lists)
