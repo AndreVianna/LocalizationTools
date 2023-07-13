@@ -303,5 +303,4 @@ public sealed class PostgreSqlLocalizationProviderTests : IDisposable {
                    });
         _dbContext.SaveChanges();
     }
-
 }

@@ -21,15 +21,8 @@ internal sealed class ListLocalizer
         => GetListItem(listKey, itemKey);
 
     private string GetListItem(string listKey, string itemKey) {
-        var s = GetLocalizedList(listKey)?
-            .Items
-            .FirstOrDefault(i => i.Key == itemKey);
-
-        var v = s?.Value;
-        if (v is not null) {
-            return v;
-        }
-
-        return itemKey;
+        var list = GetLocalizedList(listKey);
+        var item = list?.Items.FirstOrDefault(i => i.Key == itemKey);
+        return item?.Value ?? itemKey;
     }
 }
