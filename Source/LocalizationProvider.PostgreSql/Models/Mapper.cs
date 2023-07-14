@@ -1,10 +1,14 @@
-﻿namespace LocalizationProvider.PostgreSql.Models;
+﻿using DomainApplication = LocalizationProvider.Contracts.Application;
+using Application = LocalizationProvider.PostgreSql.Schema.Application;
+
+namespace LocalizationProvider.PostgreSql.Models;
 
 internal static class Mapper {
     public static TDomainModel MapTo<TEntity, TDomainModel>(this TEntity input)
         where TDomainModel : class
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
         => input switch {
+            Application r => (r.MapTo() as TDomainModel)!,
             Text r => (r.MapTo() as TDomainModel)!,
             List r => (r.MapTo() as TDomainModel)!,
             Image r => (r.MapTo() as TDomainModel)!,
@@ -15,6 +19,7 @@ internal static class Mapper {
         where TEntity : class
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
         => input switch {
+            DomainApplication r => (r.MapTo() as TEntity)!,
             LocalizedText r => (r.MapTo(applicationId, culture) as TEntity)!,
             LocalizedList r => (r.MapTo(applicationId, culture, getOrAddText) as TEntity)!,
             LocalizedImage r => (r.MapTo(applicationId, culture) as TEntity)!,
@@ -38,6 +43,17 @@ internal static class Mapper {
         }
     }
 
+    private static DomainApplication MapTo(this Application input)
+        => new() {
+            Id = input.Id,
+            Name = input.Name,
+            DefaultCulture = input.DefaultCulture,
+            AvailableCultures = input.AvailableCultures,
+            Texts = input.Texts.Select(MapTo).ToHashSet(),
+            Lists = input.Lists.Select(MapTo).ToHashSet(),
+            Images = input.Images.Select(MapTo).ToHashSet(),
+        };
+
     private static LocalizedText MapTo(this Text input)
         => new(input.Key, input.Value);
 
@@ -49,6 +65,14 @@ internal static class Mapper {
 
     private static LocalizedImage MapTo(this Image input)
         => new(input.Key, input.Bytes);
+
+    private static Application MapTo(this DomainApplication input)
+        => new() {
+            Id = input.Id,
+            Name = input.Name,
+            DefaultCulture = input.DefaultCulture,
+            AvailableCultures = input.AvailableCultures,
+        };
 
     private static Text MapTo(this LocalizedText input, Guid applicationId, string culture)
         => new() {
@@ -76,22 +100,19 @@ internal static class Mapper {
             Bytes = input.Bytes,
         };
 
-    private static List<ListItem> MapToListItems(this LocalizedList input, List list, Func<LocalizedText, Text> getOrAddText)
+    private static ICollection<ListItem> MapToListItems(this LocalizedList input, List list, Func<LocalizedText, Text> getOrAddText)
         => input.Items
                 .Select(getOrAddText)
                 .Select((item, index) => item.MapTo(list, index))
-                .ToList();
+                .ToHashSet();
 
     private static void UpdateFrom(this Text text, LocalizedText input)
         => text.Value = input.Value;
 
-    private static void UpdateFrom(this List list, LocalizedList input, Func<LocalizedText, Text> getOrAddText) {
-        list.Items.Clear();
-        for (var index = 0; index < input.Items.Length; index++) {
-            var item = getOrAddText(input.Items[index]);
-            list.Items.Add(item.MapTo(list, index));
-        }
-    }
+    private static void UpdateFrom(this List list, LocalizedList input, Func<LocalizedText, Text> getOrAddText)
+        => list.Items = input.Items
+                             .Select((item, index) => getOrAddText(item).MapTo(list, index))
+                             .ToHashSet();
 
     private static ListItem MapTo(this Text input, List list, int index)
         => new() {

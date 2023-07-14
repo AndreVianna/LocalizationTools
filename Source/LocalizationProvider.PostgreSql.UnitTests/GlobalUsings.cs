@@ -4,6 +4,7 @@ global using System;
 
 global using FluentAssertions;
 
+global using LocalizationProvider.Contracts;
 global using LocalizationProvider.PostgreSql.Schema;
 
 global using Microsoft.EntityFrameworkCore;

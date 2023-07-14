@@ -7,7 +7,7 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <RootNamespace>ApiFacade</RootNamespace>
+    <RootNamespace>LocalizationFacade</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,6 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApiFacade\ApiFacade.csproj" />
+    <ProjectReference Include="..\LocalizationFacade\LocalizationFacade.csproj" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,8 @@
-﻿namespace LocalizationProvider.PostgreSql;
+﻿using Application = LocalizationProvider.PostgreSql.Schema.Application;
 
-public sealed class PostgreSqlLocalizationProvider : ILocalizationProvider, ILocalizationHandler, IDisposable {
+namespace LocalizationProvider.PostgreSql;
+
+public sealed partial class PostgreSqlLocalizationProvider : ILocalizationProvider, ILocalizationHandler {
     private readonly Application _application;
     private string _culture;
 
@@ -8,23 +10,22 @@ public sealed class PostgreSqlLocalizationProvider : ILocalizationProvider, ILoc
     private static readonly ConcurrentDictionary<Guid, Application> _applications = new();
     private static readonly ConcurrentDictionary<ResourceKey, object?> _resources = new();
 
-    public PostgreSqlLocalizationProvider(IServiceProvider serviceProvider) {
-        var options = serviceProvider.GetRequiredService<LocalizationOptions>();
-        _dbContext = serviceProvider.GetRequiredService<LocalizationDbContext>();
+    public PostgreSqlLocalizationProvider(LocalizationDbContext dbContext, LocalizationOptions options) {
+        _dbContext = dbContext;
         _application = _applications.GetOrAdd(options.ApplicationId, id
             => _dbContext.Applications.FirstOrDefault(a => a.Id == id)
             ?? throw new InvalidOperationException($"Application with id '{id}' not found."));
         _culture = _application.DefaultCulture;
     }
 
-    private bool _isDisposed;
-    public void Dispose() {
-        if (_isDisposed) {
-            return;
-        }
+    public ILocalizationReader AsReader(string culture) {
+        SetCulture(culture);
+        return this;
+    }
 
-        _dbContext.Dispose();
-        _isDisposed = true;
+    public ILocalizationHandler AsHandler(string culture) {
+        SetCulture(culture);
+        return this;
     }
 
     private void SetCulture(string culture) {
@@ -34,34 +35,6 @@ public sealed class PostgreSqlLocalizationProvider : ILocalizationProvider, ILoc
 
         _culture = culture;
     }
-
-    public ILocalizationReader ForReadOnly(string culture) {
-        SetCulture(culture);
-        return this;
-    }
-
-    public ILocalizationHandler ForUpdate(string culture) {
-        SetCulture(culture);
-        return this;
-    }
-
-    public LocalizedText? FindText(string textKey)
-        => GetOrDefault<Text, LocalizedText>(textKey);
-
-    public LocalizedList? FindList(string listKey)
-        => GetOrDefault<List, LocalizedList>(listKey);
-
-    public LocalizedImage? FindImage(string imageKey)
-        => GetOrDefault<Image, LocalizedImage>(imageKey);
-
-    public void SetText(LocalizedText input)
-        => AddOrUpdate<Text, LocalizedText>(input);
-
-    public void SetList(LocalizedList input)
-        => AddOrUpdate<List, LocalizedList>(input);
-
-    public void SetImage(LocalizedImage input)
-        => AddOrUpdate<Image, LocalizedImage>(input);
 
     private TResource? GetOrDefault<TEntity, TResource>(string key)
         where TEntity : Resource
@@ -88,22 +61,6 @@ public sealed class PostgreSqlLocalizationProvider : ILocalizationProvider, ILoc
         _dbContext.SaveChanges();
     }
 
-    private Text GetUpdatedText(LocalizedText input) {
-        var text = LoadForUpdate<Text>(input.Key);
-        if (text is not null) {
-            if (text.Value == input.Value) {
-                return text;
-            }
-
-            text.UpdateFrom(input, null!);
-            return text;
-        }
-
-        text = input.MapTo<LocalizedText, Text>(_application.Id, _culture, null!);
-        _dbContext.Texts.Add(text);
-        return text;
-    }
-
     private TEntity? LoadAsReadOnly<TEntity>(string key)
         where TEntity : Resource
         => _dbContext.Set<TEntity>()
@@ -118,5 +75,4 @@ public sealed class PostgreSqlLocalizationProvider : ILocalizationProvider, ILoc
                      .FirstOrDefault(r => r.ApplicationId == _application.Id
                                        && r.Culture == _culture
                                        && r.Key == key);
-
 }

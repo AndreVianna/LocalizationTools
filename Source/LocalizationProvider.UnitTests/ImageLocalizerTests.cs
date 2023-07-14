@@ -8,7 +8,7 @@ public class ImageLocalizerTests {
     public ImageLocalizerTests() {
         var provider = Substitute.For<ILocalizationProvider>();
         _handler = Substitute.For<ILocalizationHandler>();
-        provider.ForReadOnly(Arg.Any<string>()).Returns(_handler);
+        provider.AsReader(Arg.Any<string>()).Returns(_handler);
         var loggerFactory = Substitute.For<ILoggerFactory>();
         _logger = Substitute.For<ILogger<ImageLocalizer>>();
         _logger.IsEnabled(Arg.Any<LogLevel>()).Returns(true);

@@ -24,8 +24,8 @@ public sealed class LocalizerFactory
 
     private ILocalizer GetOrAddLocalizer(LocalizerKey key)
         => _localizers.GetOrAdd(key, k => k.Type switch {
-            Text => new TextLocalizer(_provider.ForReadOnly(k.Culture), _loggerFactory.CreateLogger<TextLocalizer>()),
-            List => new ListLocalizer(_provider.ForReadOnly(k.Culture), _loggerFactory.CreateLogger<ListLocalizer>()),
-            _ => new ImageLocalizer(_provider.ForReadOnly(k.Culture), _loggerFactory.CreateLogger<ImageLocalizer>()),
+            List => new ListLocalizer(_provider.AsReader(k.Culture), _loggerFactory.CreateLogger<ListLocalizer>()),
+            Image => new ImageLocalizer(_provider.AsReader(k.Culture), _loggerFactory.CreateLogger<ImageLocalizer>()),
+            _ => new TextLocalizer(_provider.AsReader(k.Culture), _loggerFactory.CreateLogger<TextLocalizer>()),
         });
 }

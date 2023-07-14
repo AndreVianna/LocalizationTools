@@ -3,9 +3,9 @@ namespace LocalizationProvider;
 public class ServiceCollectionExtensionsTests {
     // ReSharper disable once ClassNeverInstantiated.Local
     private class DummyProvider : ILocalizationProvider {
-        public ILocalizationReader ForReadOnly(string culture) => throw new NotImplementedException();
+        public ILocalizationReader AsReader(string culture) => throw new NotImplementedException();
 
-        public ILocalizationHandler ForUpdate(string culture) => throw new NotImplementedException();
+        public ILocalizationHandler AsHandler(string culture) => throw new NotImplementedException();
     }
 
     [Fact]
