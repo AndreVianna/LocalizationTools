@@ -2,8 +2,6 @@
 
 global using System;
 
-global using Common.UnitTests.Extensions;
-
 global using FluentAssertions;
 
 global using LocalizationProvider.Contracts;

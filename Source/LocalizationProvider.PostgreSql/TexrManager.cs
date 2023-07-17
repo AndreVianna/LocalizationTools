@@ -13,11 +13,11 @@ public sealed partial class PostgreSqlLocalizationProvider {
                 return text;
             }
 
-            text.UpdateFrom(input, null!);
+            text.Update(input, null!);
             return text;
         }
 
-        text = input.MapTo<LocalizedText, Text>(_application.Id, _culture, null!);
+        text = input.Map<LocalizedText, Text>(_application.Id, _culture, null!);
         _dbContext.Texts.Add(text);
         return text;
     }

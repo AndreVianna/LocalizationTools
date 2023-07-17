@@ -63,21 +63,21 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     private void SeedList(string key, int itemCount) {
         _dbContext.Lists
                   .Add(new() {
-                       Key = key,
-                       ApplicationId = _application.Id,
-                       Culture = "en-US",
-                       Items = Enumerable
+                      Key = key,
+                      ApplicationId = _application.Id,
+                      Culture = "en-US",
+                      Items = Enumerable
                               .Range(0, itemCount)
                               .Select(i => new ListItem {
-                                   Index = i,
-                                   Text = new() {
-                                       ApplicationId = _application.Id,
-                                       Culture = "en-US",
-                                       Key = $"item{i + 1}_key",
-                                       Value = $"Item {i + 1}"
-                                   },
-                               }).ToArray(),
-                   });
+                                  Index = i,
+                                  Text = new() {
+                                      ApplicationId = _application.Id,
+                                      Culture = "en-US",
+                                      Key = $"item{i + 1}_key",
+                                      Value = $"Item {i + 1}"
+                                  },
+                              }).ToArray(),
+                  });
         _dbContext.SaveChanges();
     }
 }

@@ -12,17 +12,17 @@ public class ListItem : IEntityTypeConfiguration<ListItem> {
 
     public void Configure(EntityTypeBuilder<ListItem> builder) {
         builder.HasKey(e => new {
-                           e.ListId,
-                           e.Index
-                       });
+            e.ListId,
+            e.Index
+        });
         builder.HasOne(e => e.Text)
                .WithMany()
                .IsRequired()
                .OnDelete(DeleteBehavior.Restrict);
         builder.HasIndex(e => new {
-                             e.ListId,
-                             e.TextId
-                         })
+            e.ListId,
+            e.TextId
+        })
                .IsUnique();
         builder.Navigation(e => e.Text)
                .AutoInclude();

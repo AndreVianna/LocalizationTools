@@ -61,11 +61,11 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     private void SeedText(string key, string value) {
         _dbContext.Texts
                   .Add(new() {
-                       Key = key,
-                       ApplicationId = _application.Id,
-                       Culture = "en-US",
-                       Value = value,
-                   });
+                      Key = key,
+                      ApplicationId = _application.Id,
+                      Culture = "en-US",
+                      Value = value,
+                  });
         _dbContext.SaveChanges();
     }
 }

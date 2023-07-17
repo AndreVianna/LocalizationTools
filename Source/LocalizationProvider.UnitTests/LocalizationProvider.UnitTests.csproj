@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common.UnitTests\Common.UnitTests.csproj" />
+    <ProjectReference Include="..\Common.TestUtilities\Common.TestUtilities.csproj" />
     <ProjectReference Include="..\LocalizationProvider\LocalizationProvider.csproj" />
   </ItemGroup>
 

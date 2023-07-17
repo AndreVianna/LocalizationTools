@@ -1,5 +1,7 @@
-﻿using DomainApplication = LocalizationProvider.Contracts.Application;
+﻿using System.Results;
+
 using Application = LocalizationProvider.PostgreSql.Schema.Application;
+using DomainApplication = LocalizationProvider.Contracts.Application;
 
 namespace LocalizationProvider.PostgreSql;
 
@@ -8,5 +10,31 @@ public sealed partial class PostgreSqlLocalizationProvider {
         => _dbContext.Applications
                      .AsNoTracking()
                      .FirstOrDefault(i => i.Id == id)?
-                     .MapTo<Application, DomainApplication>();
+                     .MapTo();
+
+    public IEnumerable<DomainApplication> ListApplications()
+        => _dbContext.Applications
+                     .AsNoTracking()
+                     .Select(i => i.MapTo());
+
+    public bool AddApplication(DomainApplication application) {
+        var entity = _dbContext.Applications
+                               .FirstOrDefault(i => i.Id == application.Id);
+        if (entity != null) return false;
+        entity = application.MapTo();
+        _dbContext.Applications.Add(entity);
+        _dbContext.SaveChanges();
+        application.UpdateFrom(entity);
+        return true;
+    }
+
+    public bool UpdateApplication(DomainApplication application) {
+        var entity = _dbContext.Applications
+                  .FirstOrDefault(i => i.Id == application.Id);
+        if (entity == null) return false;
+        entity.UpdateFrom(application);
+        _dbContext.SaveChanges();
+        application.UpdateFrom(entity);
+        return true;
+    }
 }

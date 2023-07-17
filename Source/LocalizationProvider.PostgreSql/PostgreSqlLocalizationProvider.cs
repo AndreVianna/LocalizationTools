@@ -38,22 +38,22 @@ public sealed partial class PostgreSqlLocalizationProvider : ILocalizationProvid
 
     private TResource? GetOrDefault<TEntity, TResource>(string key)
         where TEntity : Resource
-        where TResource : class {
+        where TResource : class, ILocalizedResource {
         var resourceKey = new ResourceKey(_application.Id, _culture, key);
-        return _resources.Get(resourceKey, rk => LoadAsReadOnly<TEntity>(rk.ResourceId)?.MapTo<TEntity, TResource>());
+        return _resources.Get(resourceKey, rk => LoadAsReadOnly<TEntity>(rk.ResourceId)?.Map<TEntity, TResource>());
     }
 
     private void AddOrUpdate<TEntity, TInput>(TInput input)
         where TEntity : Resource
-        where TInput : ILocalizedResource {
+        where TInput : class, ILocalizedResource {
         var entity = LoadForUpdate<TEntity>(input.Key);
         if (entity is null) {
-            entity = input.MapTo<TInput, TEntity>(_application.Id, _culture, GetUpdatedText);
+            entity = input.Map<TInput, TEntity>(_application.Id, _culture, GetUpdatedText);
             _dbContext.Set<TEntity>().Add(entity);
             _dbContext.SaveChanges();
         }
         else {
-            entity.UpdateFrom(input, GetUpdatedText);
+            entity.Update(input, GetUpdatedText);
         }
 
         var resourceKey = new ResourceKey(_application.Id, _culture, input.Key);

@@ -34,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common.UnitTests\Common.UnitTests.csproj" />
     <ProjectReference Include="..\LocalizationProvider.PostgreSql\LocalizationProvider.PostgreSql.csproj" />
   </ItemGroup>
 

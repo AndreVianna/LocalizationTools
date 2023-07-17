@@ -54,11 +54,11 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     private void SeedImage(string key, byte[] bytes) {
         _dbContext.Images
                   .Add(new() {
-                       Key = key,
-                       ApplicationId = _application.Id,
-                       Culture = "en-US",
-                       Bytes = bytes,
-                   });
+                      Key = key,
+                      ApplicationId = _application.Id,
+                      Culture = "en-US",
+                      Bytes = bytes,
+                  });
         _dbContext.SaveChanges();
     }
 }

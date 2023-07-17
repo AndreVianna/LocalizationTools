@@ -1,4 +1,4 @@
-﻿namespace Common.UnitTests.Extensions;
+﻿namespace FluentAssertions;
 
 public static class LoggerAssertionExtensions {
     public static ILoggerFactory CreateFactory(this ILogger logger) {

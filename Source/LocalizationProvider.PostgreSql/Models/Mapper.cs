@@ -1,35 +1,34 @@
-﻿using DomainApplication = LocalizationProvider.Contracts.Application;
-using Application = LocalizationProvider.PostgreSql.Schema.Application;
+﻿using Application = LocalizationProvider.PostgreSql.Schema.Application;
+using DomainApplication = LocalizationProvider.Contracts.Application;
 
 namespace LocalizationProvider.PostgreSql.Models;
 
 internal static class Mapper {
-    public static TDomainModel MapTo<TEntity, TDomainModel>(this TEntity input)
-        where TDomainModel : class
+    public static TDomainModel Map<TEntity, TDomainModel>(this TEntity input)
+        where TEntity : Resource
+        where TDomainModel : class, ILocalizedResource
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
         => input switch {
-            Application r => (r.MapTo() as TDomainModel)!,
             Text r => (r.MapTo() as TDomainModel)!,
             List r => (r.MapTo() as TDomainModel)!,
             Image r => (r.MapTo() as TDomainModel)!,
         };
 #pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
 
-    public static TEntity MapTo<TDomainModel, TEntity>(this TDomainModel input, Guid applicationId, string culture, Func<LocalizedText, Text> getOrAddText)
-        where TEntity : class
+    public static TEntity Map<TDomainModel, TEntity>(this TDomainModel input, Guid applicationId, string culture, Func<LocalizedText, Text> getOrAddText)
+        where TDomainModel : class, ILocalizedResource
+        where TEntity : Resource
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
         => input switch {
-            DomainApplication r => (r.MapTo() as TEntity)!,
             LocalizedText r => (r.MapTo(applicationId, culture) as TEntity)!,
             LocalizedList r => (r.MapTo(applicationId, culture, getOrAddText) as TEntity)!,
             LocalizedImage r => (r.MapTo(applicationId, culture) as TEntity)!,
         };
 #pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
 
-    public static void UpdateFrom<TEntity, TDomainModel>(this TEntity target, TDomainModel input, Func<LocalizedText, Text> getOrAddText)
+    public static void Update<TEntity, TDomainModel>(this TEntity target, TDomainModel input, Func<LocalizedText, Text> getOrAddText)
         where TEntity : Resource
-        where TDomainModel : ILocalizedResource {
-
+        where TDomainModel : class, ILocalizedResource {
         switch (target) {
             case Text r when input is LocalizedText lti:
                 r.UpdateFrom(lti);
@@ -43,7 +42,7 @@ internal static class Mapper {
         }
     }
 
-    private static DomainApplication MapTo(this Application input)
+    public static DomainApplication MapTo(this Application input)
         => new() {
             Id = input.Id,
             Name = input.Name,
@@ -53,6 +52,28 @@ internal static class Mapper {
             Lists = input.Lists.Select(MapTo).ToHashSet(),
             Images = input.Images.Select(MapTo).ToHashSet(),
         };
+
+    public static Application MapTo(this DomainApplication input)
+        => new() {
+            Id = input.Id,
+            Name = input.Name,
+            DefaultCulture = input.DefaultCulture,
+            AvailableCultures = input.AvailableCultures,
+        };
+
+    public static void UpdateFrom(this Application target, DomainApplication input) {
+        target.Id = input.Id;
+        target.Name = input.Name;
+        target.DefaultCulture = input.DefaultCulture;
+        target.AvailableCultures = input.AvailableCultures;
+    }
+
+    public static void UpdateFrom(this DomainApplication target, Application input) {
+        target.Id = input.Id;
+        target.Name = input.Name;
+        target.DefaultCulture = input.DefaultCulture;
+        target.AvailableCultures = input.AvailableCultures;
+    }
 
     private static LocalizedText MapTo(this Text input)
         => new(input.Key, input.Value);
@@ -65,14 +86,6 @@ internal static class Mapper {
 
     private static LocalizedImage MapTo(this Image input)
         => new(input.Key, input.Bytes);
-
-    private static Application MapTo(this DomainApplication input)
-        => new() {
-            Id = input.Id,
-            Name = input.Name,
-            DefaultCulture = input.DefaultCulture,
-            AvailableCultures = input.AvailableCultures,
-        };
 
     private static Text MapTo(this LocalizedText input, Guid applicationId, string culture)
         => new() {

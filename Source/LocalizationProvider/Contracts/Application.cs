@@ -1,6 +1,9 @@
-﻿namespace LocalizationProvider.Contracts;
+﻿using System.Results;
+using System.Validation;
 
-public class Application {
+namespace LocalizationProvider.Contracts;
+
+public class Application : IValidatable {
     public required Guid Id { get; set; }
     public required string Name { get; set; }
     public required string DefaultCulture { get; set; }
@@ -8,4 +11,7 @@ public class Application {
     public ICollection<LocalizedText> Texts { get; set; } = new HashSet<LocalizedText>();
     public ICollection<LocalizedList> Lists { get; set; } = new HashSet<LocalizedList>();
     public ICollection<LocalizedImage> Images { get; set; } = new HashSet<LocalizedImage>();
+
+    public Result Validate(IDictionary<string, object?>? context = null) 
+        => Result.Success();
 }
