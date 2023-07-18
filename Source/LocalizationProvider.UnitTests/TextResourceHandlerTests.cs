@@ -1,6 +1,5 @@
 namespace LocalizationProvider;
 
-
 public class TextResourceHandlerTests {
     private readonly ILocalizationRepository _repository;
     private readonly ILogger<TextResourceHandler> _logger;
