@@ -2,7 +2,7 @@ namespace LocalizationProvider.PostgreSql;
 
 public sealed partial class PostgreSqlLocalizationProviderTests : IDisposable {
     private readonly LocalizationDbContext _dbContext;
-    private readonly PostgreSqlLocalizationProvider _provider;
+    private readonly PostgreSqlLocalizationRepository _repository;
 
     public PostgreSqlLocalizationProviderTests() {
         var builder = new DbContextOptionsBuilder<LocalizationDbContext>();
@@ -12,13 +12,13 @@ public sealed partial class PostgreSqlLocalizationProviderTests : IDisposable {
         _dbContext = new LocalizationDbContext(builder.Options);
         SeedApplication();
 
-        _provider = CreateProvider(_defaultApplicationId);
+        _repository = CreateProvider(_defaultApplicationId);
     }
 
     public void Dispose() => _dbContext.Dispose();
 
-    private PostgreSqlLocalizationProvider CreateProvider(Guid applicationId) {
-        var options = new LocalizationOptions { ApplicationId = applicationId };
+    private PostgreSqlLocalizationRepository CreateProvider(Guid applicationId) {
+        var options = new LocalizationRepositoryOptions { ApplicationId = applicationId };
         return new(_dbContext, options);
     }
 
@@ -38,7 +38,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests : IDisposable {
     [Fact]
     public void SetCulture_ThrowsException_WhenCultureNotAvailable() {
         // Act
-        Action act = () => _provider.AsReader("es-MX");
+        Action act = () => _repository.AsReader("es-MX");
 
         // Assert
         act.Should().Throw<InvalidOperationException>()
@@ -48,18 +48,18 @@ public sealed partial class PostgreSqlLocalizationProviderTests : IDisposable {
     [Fact]
     public void AsReader_ReturnsProvider() {
         // Act
-        var result = _provider.AsReader("en-CA");
+        var result = _repository.AsReader("en-CA");
 
         // Assert
-        result.Should().BeSameAs(_provider);
+        result.Should().BeSameAs(_repository);
     }
 
     [Fact]
     public void AsHandler_ReturnsProvider() {
         // Act
-        var result = _provider.AsHandler("en-CA");
+        var result = _repository.AsHandler("en-CA");
 
         // Assert
-        result.Should().BeSameAs(_provider);
+        result.Should().BeSameAs(_repository);
     }
 }

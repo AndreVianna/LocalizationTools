@@ -1,6 +1,6 @@
 ﻿namespace LocalizationProvider.PostgreSql;
 
-public sealed partial class PostgreSqlLocalizationProvider {
+public sealed partial class PostgreSqlLocalizationRepository {
     public LocalizedImage? FindImage(string imageKey)
         => GetOrDefault<Image, LocalizedImage>(imageKey);
 

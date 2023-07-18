@@ -1,6 +1,6 @@
 ﻿namespace LocalizationProvider.PostgreSql;
 
-public sealed partial class PostgreSqlLocalizationProvider {
+public sealed partial class PostgreSqlLocalizationRepository {
     public LocalizedText? FindText(string textKey)
         => GetOrDefault<Text, LocalizedText>(textKey);
 

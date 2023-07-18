@@ -8,7 +8,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         SeedText(key, "MMMM dd, yyyy");
 
         // Act
-        var result = _provider.FindText(key);
+        var result = _repository.FindText(key);
 
         // Assert
         var subject = result.Should().BeOfType<LocalizedText>().Subject;
@@ -23,7 +23,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         SeedText(key, "0.000$");
 
         // Act
-        var result = _provider.FindText(key);
+        var result = _repository.FindText(key);
 
         // Assert
         var subject = result.Should().BeOfType<LocalizedText>().Subject;
@@ -36,10 +36,10 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         const string key = "newText_key";
         var input = new LocalizedText(key, "Some text.");
         // Act
-        _provider.SetText(input);
+        _repository.SetText(input);
 
         // Assert
-        _provider.FindText(key).Should().NotBeNull();
+        _repository.FindText(key).Should().NotBeNull();
     }
 
     [Fact]
@@ -50,10 +50,10 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         var input = new LocalizedText(key, "New value");
 
         // Act
-        _provider.SetText(input);
+        _repository.SetText(input);
 
         // Assert
-        var result = _provider.FindText(key);
+        var result = _repository.FindText(key);
         result.Should().NotBeNull();
         result!.Value.Should().Be("New value");
     }

@@ -4,14 +4,14 @@ internal abstract class Localizer<TLocalizer>
     : ILocalizer
     where TLocalizer : Localizer<TLocalizer> {
     private readonly ILogger<TLocalizer> _logger;
-    private readonly ILocalizationReader _reader;
+    private readonly IResourceReader _reader;
 
-    protected Localizer(ILocalizationReader reader, ILogger<TLocalizer> logger) {
+    protected Localizer(IResourceReader reader, ILogger<TLocalizer> logger) {
         _reader = reader;
         _logger = logger;
     }
 
-    protected TResult? GetResourceOrDefault<TResult>(string resourceKey, ResourceType resourceType, Func<ILocalizationReader, TResult> getLocalizedResult) {
+    protected TResult? GetResourceOrDefault<TResult>(string resourceKey, ResourceType resourceType, Func<IResourceReader, TResult> getLocalizedResult) {
         try {
             var result = getLocalizedResult(_reader);
             if (result is not null) {

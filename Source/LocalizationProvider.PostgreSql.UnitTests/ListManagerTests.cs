@@ -4,7 +4,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     [Fact]
     public void FindList_ReturnsNull_WhenListNotFound() {
         // Act
-        var result = _provider.FindList("SomeList");
+        var result = _repository.FindList("SomeList");
 
         // Assert
         result.Should().BeNull();
@@ -16,7 +16,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         SeedList("list_key", 2);
 
         // Act
-        var result = _provider.FindList("list_key");
+        var result = _repository.FindList("list_key");
 
         // Assert
         var subject = result.Should().BeOfType<LocalizedList>().Subject;
@@ -32,10 +32,10 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
                                           new LocalizedText("item2_key", "Item 2"),
                                       });
         // Act
-        _provider.SetList(input);
+        _repository.SetList(input);
 
         // Assert
-        _provider.FindList(key).Should().NotBeNull();
+        _repository.FindList(key).Should().NotBeNull();
     }
 
     [Fact]
@@ -52,10 +52,10 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         });
 
         // Act
-        _provider.SetList(input);
+        _repository.SetList(input);
 
         // Assert
-        var result = _provider.FindList(key);
+        var result = _repository.FindList(key);
         result.Should().NotBeNull();
         result!.Items.Should().HaveCount(4);
     }

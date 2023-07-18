@@ -1,6 +1,6 @@
 ﻿namespace LocalizationProvider.PostgreSql;
 
-public record PostgreSqlLocalizationOptions : LocalizationOptions {
+public record PostgreSqlLocalizationRepositoryOptions : LocalizationRepositoryOptions {
     [Required]
     public required string ConnectionString { get; init; }
 }

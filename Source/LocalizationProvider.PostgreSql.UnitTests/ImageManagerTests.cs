@@ -4,7 +4,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     [Fact]
     public void FindImage_ReturnsNull_WhenImageNotFound() {
         // Act
-        var result = _provider.FindImage("SomeImage");
+        var result = _repository.FindImage("SomeImage");
 
         // Assert
         result.Should().BeNull();
@@ -16,7 +16,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         SeedImage("Image_key", new byte[] { 1, 2, 3, 4 });
 
         // Act
-        var result = _provider.FindImage("Image_key");
+        var result = _repository.FindImage("Image_key");
 
         // Assert
         var subject = result.Should().BeOfType<LocalizedImage>().Subject;
@@ -28,10 +28,10 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         const string key = "newImage_key";
         var input = new LocalizedImage(key, new byte[] { 1, 2, 3, 4 });
         // Act
-        _provider.SetImage(input);
+        _repository.SetImage(input);
 
         // Assert
-        _provider.FindImage(key).Should().NotBeNull();
+        _repository.FindImage(key).Should().NotBeNull();
     }
 
     [Fact]
@@ -42,10 +42,10 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         var input = new LocalizedImage(key, new byte[] { 5, 6, 7, 8 });
 
         // Act
-        _provider.SetImage(input);
+        _repository.SetImage(input);
 
         // Assert
-        var result = _provider.FindImage(key);
+        var result = _repository.FindImage(key);
         result.Should().NotBeNull();
         result!.Bytes.Should().BeEquivalentTo(new byte[] { 5, 6, 7, 8 });
     }

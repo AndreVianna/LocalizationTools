@@ -2,7 +2,7 @@
 
 namespace LocalizationProvider.PostgreSql;
 
-public sealed partial class PostgreSqlLocalizationProvider : ILocalizationProvider, ILocalizationHandler {
+public sealed partial class PostgreSqlLocalizationRepository : ILocalizationRepository, IResourceRepository {
     private readonly Application _application;
     private string _culture;
 
@@ -10,7 +10,7 @@ public sealed partial class PostgreSqlLocalizationProvider : ILocalizationProvid
     private static readonly ConcurrentDictionary<Guid, Application> _applications = new();
     private static readonly ConcurrentDictionary<ResourceKey, object?> _resources = new();
 
-    public PostgreSqlLocalizationProvider(LocalizationDbContext dbContext, LocalizationOptions options) {
+    public PostgreSqlLocalizationRepository(LocalizationDbContext dbContext, LocalizationRepositoryOptions options) {
         _dbContext = dbContext;
         _application = _applications.GetOrAdd(options.ApplicationId, id
             => _dbContext.Applications.FirstOrDefault(a => a.Id == id)
@@ -18,12 +18,12 @@ public sealed partial class PostgreSqlLocalizationProvider : ILocalizationProvid
         _culture = _application.DefaultCulture;
     }
 
-    public ILocalizationReader AsReader(string culture) {
+    public IResourceReader AsReader(string culture) {
         SetCulture(culture);
         return this;
     }
 
-    public ILocalizationHandler AsHandler(string culture) {
+    public IResourceRepository AsHandler(string culture) {
         SetCulture(culture);
         return this;
     }

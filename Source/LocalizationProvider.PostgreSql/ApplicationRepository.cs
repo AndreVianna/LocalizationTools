@@ -1,11 +1,8 @@
-﻿using System.Results;
-
-using Application = LocalizationProvider.PostgreSql.Schema.Application;
-using DomainApplication = LocalizationProvider.Contracts.Application;
+﻿using DomainApplication = LocalizationProvider.Contracts.Application;
 
 namespace LocalizationProvider.PostgreSql;
 
-public sealed partial class PostgreSqlLocalizationProvider {
+public sealed partial class PostgreSqlLocalizationRepository : IApplicationRepository {
     public DomainApplication? FindApplicationById(Guid id)
         => _dbContext.Applications
                      .AsNoTracking()

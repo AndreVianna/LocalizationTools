@@ -2,10 +2,11 @@
 
 namespace LocalizationProvider;
 
-internal sealed class ListLocalizer
-    : Localizer<ListLocalizer>,
-    IListLocalizer {
-    internal ListLocalizer(ILocalizationReader reader, ILogger<ListLocalizer> logger)
+internal sealed class ListResourceHandler
+    : Localizer<ListResourceHandler>
+    , IListLocalizer
+    , IListResourceHandler {
+    internal ListResourceHandler(IResourceReader reader, ILogger<ListResourceHandler> logger)
         : base(reader, logger) { }
 
     public LocalizedList? GetLocalizedList(string lisKey)

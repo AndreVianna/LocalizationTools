@@ -4,10 +4,11 @@ using static LocalizationProvider.Models.ResourceType;
 
 namespace LocalizationProvider;
 
-internal sealed class TextLocalizer
-    : Localizer<TextLocalizer>,
-      ITextLocalizer {
-    internal TextLocalizer(ILocalizationReader provider, ILogger<TextLocalizer> logger)
+internal sealed class TextResourceHandler
+    : Localizer<TextResourceHandler>
+    , ITextLocalizer
+    , ITextResourceHandler {
+    internal TextResourceHandler(IResourceReader provider, ILogger<TextResourceHandler> logger)
         : base(provider, logger) { }
 
     public LocalizedText? GetLocalizedText(string textKey)

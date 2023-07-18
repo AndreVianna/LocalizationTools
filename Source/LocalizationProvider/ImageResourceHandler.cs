@@ -2,10 +2,11 @@
 
 namespace LocalizationProvider;
 
-internal class ImageLocalizer
-    : Localizer<ImageLocalizer>,
-    IImageLocalizer {
-    internal ImageLocalizer(ILocalizationReader reader, ILogger<ImageLocalizer> logger)
+internal class ImageResourceHandler
+    : Localizer<ImageResourceHandler>
+    , IImageLocalizer
+    , IImageResourceHandler {
+    internal ImageResourceHandler(IResourceReader reader, ILogger<ImageResourceHandler> logger)
         : base(reader, logger) { }
 
     public LocalizedImage? GetLocalizedImage(string imageKey)

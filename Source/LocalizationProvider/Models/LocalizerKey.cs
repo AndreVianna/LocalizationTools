@@ -1,3 +1,3 @@
 ﻿namespace LocalizationProvider.Models;
 
-internal record struct LocalizerKey(ResourceType Type, string Culture);
+internal record struct LocalizerKey(string LocalizerType, string Culture);

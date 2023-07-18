@@ -21,7 +21,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     [Fact]
     public void FindApplicationById_WhenApplicationExists_ReturnsApplication() {
         // Act
-        var result = _provider.FindApplicationById(_defaultApplicationId);
+        var result = _repository.FindApplicationById(_defaultApplicationId);
 
         // Assert
         result.Should().BeOfType<DomainApplication>();
@@ -35,7 +35,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     [Fact]
     public void FindApplicationById_WhenApplicationDoesNotExist_ReturnsNull() {
         // Act
-        var result = _provider.FindApplicationById(Guid.NewGuid());
+        var result = _repository.FindApplicationById(Guid.NewGuid());
 
         // Assert
         result.Should().BeNull();
@@ -59,7 +59,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         SeedApplication(application2);
 
         // Act
-        var result = _provider.ListApplications();
+        var result = _repository.ListApplications();
 
         // Assert
         var array = result.Should().BeOfType<DomainApplication[]>().Subject;
@@ -80,7 +80,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         };
 
         // Act
-        var result = _provider.AddApplication(application);
+        var result = _repository.AddApplication(application);
 
         // Assert
         result.Should().BeTrue();
@@ -104,7 +104,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         };
 
         // Act
-        var result = _provider.AddApplication(application);
+        var result = _repository.AddApplication(application);
 
         // Assert
         result.Should().BeFalse();
@@ -128,7 +128,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         };
 
         // Act
-        var result = _provider.UpdateApplication(application);
+        var result = _repository.UpdateApplication(application);
 
         // Assert
         result.Should().BeTrue();
@@ -152,7 +152,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         };
 
         // Act
-        var result = _provider.UpdateApplication(application);
+        var result = _repository.UpdateApplication(application);
 
         // Assert
         result.Should().BeFalse();
@@ -172,7 +172,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         SeedApplication(application);
 
         // Act
-        _provider.RemoveApplication(application.Id);
+        _repository.RemoveApplication(application.Id);
 
         // Assert
         var entity = _dbContext.Applications.FirstOrDefault(i => i.Id == application.Id);
@@ -183,7 +183,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     [Fact]
     public void RemoveApplication_WhenApplicationDoesNotExist_ReturnsFalse() {
         // Act
-        var action = () => _provider.RemoveApplication(Guid.NewGuid());
+        var action = () => _repository.RemoveApplication(Guid.NewGuid());
 
         // Assert
         action.Should().NotThrow();

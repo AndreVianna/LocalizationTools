@@ -1,7 +1,6 @@
 ﻿namespace LocalizationProvider.Contracts;
 
 public interface ILocalizerFactory {
-    ITextLocalizer CreateTextLocalizer(string culture);
-    IListLocalizer CreateListLocalizer(string culture);
-    IImageLocalizer CreateImageLocalizer(string culture);
+    TLocalizer Create<TLocalizer>(string culture)
+        where TLocalizer : ILocalizer;
 }

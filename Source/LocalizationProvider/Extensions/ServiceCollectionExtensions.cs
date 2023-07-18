@@ -1,19 +1,11 @@
 ﻿namespace LocalizationProvider.Extensions;
 
 public static class ServiceCollectionExtensions {
-    public static IServiceCollection AddLocalizationHandler<THandler, THandlerOptions>(this IServiceCollection services)
-        where THandler : class, ILocalizationProvider
-        where THandlerOptions : LocalizationOptions {
-        services.AddOptions<THandlerOptions>().ValidateDataAnnotations();
-        services.TryAddScoped<ILocalizationProvider, THandler>();
-        return services;
-    }
-
-    public static IServiceCollection AddLocalizationProvider<TProvider, TProviderOptions>(this IServiceCollection services)
-        where TProvider : class, ILocalizationProvider
-        where TProviderOptions : LocalizationOptions {
-        services.AddOptions<TProviderOptions>().ValidateDataAnnotations();
-        services.TryAddSingleton<ILocalizationProvider, TProvider>();
+    public static IServiceCollection AddLocalizationProvider<TRepository, TRepositoryOptions>(this IServiceCollection services)
+        where TRepository : class, ILocalizationRepository
+        where TRepositoryOptions : LocalizationRepositoryOptions {
+        services.AddOptions<TRepositoryOptions>().ValidateDataAnnotations();
+        services.TryAddSingleton<ILocalizationRepository, TRepository>();
         services.TryAddSingleton<ILocalizerFactory, LocalizerFactory>();
         return services;
     }
