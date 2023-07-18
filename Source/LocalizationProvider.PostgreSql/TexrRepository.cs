@@ -1,11 +1,12 @@
 ﻿namespace LocalizationProvider.PostgreSql;
 
-public sealed partial class PostgreSqlLocalizationRepository {
-    public LocalizedText? FindText(string textKey)
+internal partial class PostgreSqlLocalizationRepository {
+    public LocalizedText? FindTextByKey(string textKey)
         => GetOrDefault<Text, LocalizedText>(textKey);
 
-    public void SetText(LocalizedText input)
+    public void AddOrUpdateText(LocalizedText input)
         => AddOrUpdate<Text, LocalizedText>(input);
+
     private Text GetUpdatedText(LocalizedText input) {
         var text = LoadForUpdate<Text>(input.Key);
         if (text is not null) {

@@ -2,10 +2,8 @@ namespace LocalizationProvider;
 
 public class ServiceCollectionExtensionsTests {
     // ReSharper disable once ClassNeverInstantiated.Local
-    private class DummyRepository : ILocalizationRepository {
-        public IResourceReader AsReader(string culture) => throw new NotImplementedException();
-
-        public IResourceRepository AsHandler(string culture) => throw new NotImplementedException();
+    private class DummyFactory : ILocalizationRepositoryFactory {
+        public ILocalizationRepository CreateFor(string culture) => throw new NotImplementedException();
     }
 
     [Fact]
@@ -14,7 +12,7 @@ public class ServiceCollectionExtensionsTests {
         var services = new ServiceCollection();
 
         // Act
-        var result = services.AddLocalizationProvider<DummyRepository, LocalizationRepositoryOptions>();
+        var result = services.AddLocalizationProvider<DummyFactory, LocalizationRepositoryOptions>();
 
         // Assert
         result.Should().BeSameAs(services);

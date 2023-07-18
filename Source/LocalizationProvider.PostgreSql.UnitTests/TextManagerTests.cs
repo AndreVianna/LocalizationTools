@@ -1,14 +1,14 @@
 namespace LocalizationProvider.PostgreSql;
 
-public sealed partial class PostgreSqlLocalizationProviderTests {
+public sealed partial class PostgreSqlResourceRepositoryTests {
     [Fact]
-    public void FindText_DateTimeProviderFormat_ReturnsCorrectFormat_WhenResourceExists() {
+    public void FindTextByKey_DateTimeProviderFormat_ReturnsCorrectFormat_WhenResourceExists() {
         // Arrange
         var key = Keys.GetDateTimeFormatKey(DateTimeFormat.LongDateTimePattern);
         SeedText(key, "MMMM dd, yyyy");
 
         // Act
-        var result = _repository.FindText(key);
+        var result = _repository.FindTextByKey(key);
 
         // Assert
         var subject = result.Should().BeOfType<LocalizedText>().Subject;
@@ -17,13 +17,13 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     }
 
     [Fact]
-    public void FindText_ForNumberFormat_ReturnsCorrectFormat_WhenResourceExists() {
+    public void FindTextByKey_ForNumberFormat_ReturnsCorrectFormat_WhenResourceExists() {
         // Arrange
         var key = Keys.GetNumberFormatKey(NumberFormat.CurrencyPattern, 3);
         SeedText(key, "0.000$");
 
         // Act
-        var result = _repository.FindText(key);
+        var result = _repository.FindTextByKey(key);
 
         // Assert
         var subject = result.Should().BeOfType<LocalizedText>().Subject;
@@ -32,28 +32,28 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     }
 
     [Fact]
-    public void SetText_AddsLocalizedText() {
+    public void AddOrUpdateText_AddsLocalizedText() {
         const string key = "newText_key";
         var input = new LocalizedText(key, "Some text.");
         // Act
-        _repository.SetText(input);
+        _repository.AddOrUpdateText(input);
 
         // Assert
-        _repository.FindText(key).Should().NotBeNull();
+        _repository.FindTextByKey(key).Should().NotBeNull();
     }
 
     [Fact]
-    public void SetText_WhenTextExists_UpdatesTextValue() {
+    public void AddOrUpdateText_WhenTextExists_UpdatesTextValue() {
         // Arrange
         const string key = "oldText_key";
         SeedText(key, "Old value");
         var input = new LocalizedText(key, "New value");
 
         // Act
-        _repository.SetText(input);
+        _repository.AddOrUpdateText(input);
 
         // Assert
-        var result = _repository.FindText(key);
+        var result = _repository.FindTextByKey(key);
         result.Should().NotBeNull();
         result!.Value.Should().Be("New value");
     }

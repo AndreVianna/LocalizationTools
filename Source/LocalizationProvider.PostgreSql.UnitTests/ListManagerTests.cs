@@ -1,22 +1,22 @@
 namespace LocalizationProvider.PostgreSql;
 
-public sealed partial class PostgreSqlLocalizationProviderTests {
+public sealed partial class PostgreSqlResourceRepositoryTests {
     [Fact]
-    public void FindList_ReturnsNull_WhenListNotFound() {
+    public void FindListByKey_ReturnsNull_WhenListNotFound() {
         // Act
-        var result = _repository.FindList("SomeList");
+        var result = _repository.FindListByKey("SomeList");
 
         // Assert
         result.Should().BeNull();
     }
 
     [Fact]
-    public void FindList_ReturnsListItems_WhenListExists() {
+    public void FindListByKey_ReturnsListItems_WhenListExists() {
         // Arrange
         SeedList("list_key", 2);
 
         // Act
-        var result = _repository.FindList("list_key");
+        var result = _repository.FindListByKey("list_key");
 
         // Assert
         var subject = result.Should().BeOfType<LocalizedList>().Subject;
@@ -24,7 +24,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     }
 
     [Fact]
-    public void SetList_AddsLocalizedList() {
+    public void AddOrUpdateList_AddsLocalizedList() {
         const string key = "newList_key";
         var input = new LocalizedList(key,
                                       new[] {
@@ -32,14 +32,14 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
                                           new LocalizedText("item2_key", "Item 2"),
                                       });
         // Act
-        _repository.SetList(input);
+        _repository.AddOrUpdateList(input);
 
         // Assert
-        _repository.FindList(key).Should().NotBeNull();
+        _repository.FindListByKey(key).Should().NotBeNull();
     }
 
     [Fact]
-    public void SetList_WhenListExists_UpdatesListValue() {
+    public void AddOrUpdateList_WhenListExists_UpdatesListValue() {
         // Arrange
         const string key = "oldList_key";
         SeedList(key, 2);
@@ -52,10 +52,10 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
         });
 
         // Act
-        _repository.SetList(input);
+        _repository.AddOrUpdateList(input);
 
         // Assert
-        var result = _repository.FindList(key);
+        var result = _repository.FindListByKey(key);
         result.Should().NotBeNull();
         result!.Items.Should().HaveCount(4);
     }

@@ -2,24 +2,22 @@
 
 public sealed class LocalizerFactory
     : ILocalizerFactory {
-    private readonly ILocalizationRepository _repository;
+    private readonly ILocalizationRepositoryFactory _repositoryFactory;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ConcurrentDictionary<LocalizerKey, ILocalizer> _localizers = new();
 
-    public LocalizerFactory(ILocalizationRepository repository, ILoggerFactory loggerFactory) {
-        _repository = repository;
+    public LocalizerFactory(ILocalizationRepositoryFactory repositoryFactory, ILoggerFactory loggerFactory) {
+        _repositoryFactory = repositoryFactory;
         _loggerFactory = loggerFactory;
     }
 
     public TLocalizer Create<TLocalizer>(string culture)
-        where TLocalizer : ILocalizer {
-        var key = new LocalizerKey(typeof(TLocalizer).Name, culture);
-        return (TLocalizer)_localizers
-           .GetOrAdd(key, k => k.LocalizerType switch {
-                nameof(IListLocalizer) => new ListResourceHandler(_repository.AsReader(k.Culture), _loggerFactory.CreateLogger<ListResourceHandler>()),
-                nameof(IImageLocalizer) => new ImageResourceHandler(_repository.AsReader(k.Culture), _loggerFactory.CreateLogger<ImageResourceHandler>()),
-                nameof(ITextLocalizer) => new TextResourceHandler(_repository.AsReader(k.Culture), _loggerFactory.CreateLogger<TextResourceHandler>()),
-                _ => throw new NotSupportedException($"Localizer of type '{k.LocalizerType}' is not supported."),
-            });
-    }
+        where TLocalizer : class, ITypedLocalizer
+        => (TLocalizer)_localizers
+           .GetOrAdd(new(TLocalizer.Type, culture), k => typeof(TLocalizer).Name switch {
+               nameof(TextLocalizer) => new TextLocalizer(new TextResourceHandler(_repositoryFactory.CreateFor(k.Culture), _loggerFactory.CreateLogger<TextResourceHandler>())),
+               nameof(ListLocalizer) => new ListLocalizer(new ListResourceHandler(_repositoryFactory.CreateFor(k.Culture), _loggerFactory.CreateLogger<ListResourceHandler>())),
+               nameof(ImageLocalizer) => new ImageLocalizer(new ImageResourceHandler(_repositoryFactory.CreateFor(k.Culture), _loggerFactory.CreateLogger<ImageResourceHandler>())),
+               _ => throw new NotSupportedException($"A localizer of type '{typeof(TLocalizer).Name}' is not supported."),
+           });
 }

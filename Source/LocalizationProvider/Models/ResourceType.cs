@@ -1,6 +1,6 @@
 ﻿namespace LocalizationProvider.Models;
 
-internal enum ResourceType {
+public enum ResourceType {
     Text,
     List,
     Image,

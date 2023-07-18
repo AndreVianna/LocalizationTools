@@ -2,37 +2,15 @@
 
 namespace LocalizationProvider.PostgreSql;
 
-public sealed partial class PostgreSqlLocalizationRepository : ILocalizationRepository, IResourceRepository {
+internal sealed partial class PostgreSqlLocalizationRepository : ILocalizationRepository {
     private readonly Application _application;
-    private string _culture;
-
+    private readonly string _culture;
     private readonly LocalizationDbContext _dbContext;
-    private static readonly ConcurrentDictionary<Guid, Application> _applications = new();
     private static readonly ConcurrentDictionary<ResourceKey, object?> _resources = new();
 
-    public PostgreSqlLocalizationRepository(LocalizationDbContext dbContext, LocalizationRepositoryOptions options) {
+    public PostgreSqlLocalizationRepository(LocalizationDbContext dbContext, Application application, string culture) {
         _dbContext = dbContext;
-        _application = _applications.GetOrAdd(options.ApplicationId, id
-            => _dbContext.Applications.FirstOrDefault(a => a.Id == id)
-            ?? throw new InvalidOperationException($"Application with id '{id}' not found."));
-        _culture = _application.DefaultCulture;
-    }
-
-    public IResourceReader AsReader(string culture) {
-        SetCulture(culture);
-        return this;
-    }
-
-    public IResourceRepository AsHandler(string culture) {
-        SetCulture(culture);
-        return this;
-    }
-
-    private void SetCulture(string culture) {
-        if (!_application.AvailableCultures.Contains(culture)) {
-            throw new InvalidOperationException($"Culture '{culture}' is not available for application '{_application.Name}'.");
-        }
-
+        _application = application;
         _culture = culture;
     }
 
@@ -64,15 +42,15 @@ public sealed partial class PostgreSqlLocalizationRepository : ILocalizationRepo
     private TEntity? LoadAsReadOnly<TEntity>(string key)
         where TEntity : Resource
         => _dbContext.Set<TEntity>()
-                     .AsNoTracking()
-                     .FirstOrDefault(r => r.ApplicationId == _application.Id
-                                       && r.Culture == _culture
-                                       && r.Key == key);
+            .AsNoTracking()
+            .FirstOrDefault(r => r.ApplicationId == _application.Id
+                                 && r.Culture == _culture
+                                 && r.Key == key);
 
     private TEntity? LoadForUpdate<TEntity>(string key)
         where TEntity : Resource
         => _dbContext.Set<TEntity>()
-                     .FirstOrDefault(r => r.ApplicationId == _application.Id
-                                       && r.Culture == _culture
-                                       && r.Key == key);
+            .FirstOrDefault(r => r.ApplicationId == _application.Id
+                                 && r.Culture == _culture
+                                 && r.Key == key);
 }

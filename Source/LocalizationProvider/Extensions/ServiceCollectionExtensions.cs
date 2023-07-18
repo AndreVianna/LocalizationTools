@@ -2,10 +2,10 @@
 
 public static class ServiceCollectionExtensions {
     public static IServiceCollection AddLocalizationProvider<TRepository, TRepositoryOptions>(this IServiceCollection services)
-        where TRepository : class, ILocalizationRepository
+        where TRepository : class, ILocalizationRepositoryFactory
         where TRepositoryOptions : LocalizationRepositoryOptions {
         services.AddOptions<TRepositoryOptions>().ValidateDataAnnotations();
-        services.TryAddSingleton<ILocalizationRepository, TRepository>();
+        services.TryAddSingleton<ILocalizationRepositoryFactory, TRepository>();
         services.TryAddSingleton<ILocalizerFactory, LocalizerFactory>();
         return services;
     }

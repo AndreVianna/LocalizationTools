@@ -1,17 +1,18 @@
 namespace LocalizationProvider;
 
-public class TextLocalizerTests {
-    private readonly IResourceRepository _repository;
+
+public class TextResourceHandlerTests {
+    private readonly ILocalizationRepository _repository;
     private readonly ILogger<TextResourceHandler> _logger;
     private readonly ITextLocalizer _subject;
 
-    public TextLocalizerTests() {
-        var provider = Substitute.For<ILocalizationRepository>();
-        _repository = Substitute.For<IResourceRepository>();
-        provider.AsReader(Arg.Any<string>()).Returns(_repository);
+    public TextResourceHandlerTests() {
+        var provider = Substitute.For<ILocalizationRepositoryFactory>();
+        _repository = Substitute.For<ILocalizationRepository>();
+        provider.CreateFor(Arg.Any<string>()).Returns(_repository);
         _logger = Substitute.For<ILogger<TextResourceHandler>>();
         var factory = new LocalizerFactory(provider, _logger.CreateFactory());
-        _subject = factory.Create<ITextLocalizer>("en-CA");
+        _subject = factory.Create<TextLocalizer>("en-CA");
     }
 
     [Fact]
@@ -19,7 +20,7 @@ public class TextLocalizerTests {
         // Arrange
         const string textKey = "text_key";
         var expectedText = new LocalizedText(textKey, "Hello, world!");
-        _repository.FindText(Arg.Any<string>()).Returns(expectedText);
+        _repository.FindTextByKey(Arg.Any<string>()).Returns(expectedText);
 
         // Act
         var result = _subject[textKey];
@@ -32,14 +33,14 @@ public class TextLocalizerTests {
     public void Indexer_WithTextKey_WhenKeyNotFound_ReturnsTextKey_AndLogsWarning() {
         // Arrange
         const string textKey = "text_key";
-        _repository.FindText(Arg.Any<string>()).Returns(default(LocalizedText));
+        _repository.FindTextByKey(Arg.Any<string>()).Returns(default(LocalizedText));
 
         // Act
         var result = _subject[textKey];
 
         // Assert
         result.Should().Be(textKey);
-        _logger.ShouldContain(LogLevel.Warning, "Localized Text for 'text_key' not found.", new(1, nameof(Extensions.LoggerExtensions.LogResourceNotFound)));
+        _logger.ShouldContain(LogLevel.Warning, "A localized Text with key 'text_key' was not found.", new(1, nameof(Extensions.LoggerExtensions.LogResourceNotFound)));
     }
 
     [Fact]
@@ -48,7 +49,7 @@ public class TextLocalizerTests {
         const string templateKey = "template_key";
         const string expectedText = "Hello, John!";
         var expectedTemplate = new LocalizedText(templateKey, "Hello, {0}!");
-        _repository.FindText(Arg.Any<string>()).Returns(expectedTemplate);
+        _repository.FindTextByKey(Arg.Any<string>()).Returns(expectedTemplate);
 
         // Act
         var result = _subject[templateKey, "John"];
@@ -62,7 +63,7 @@ public class TextLocalizerTests {
         // Arrange
         var dateTime = new DateTime(2021, 09, 23);
         var expectedFormattedValue = dateTime.ToString(GetDateTimeFormatKey(DefaultDateTimePattern));
-        _repository.FindText(Arg.Any<string>()).Returns(default(LocalizedText));
+        _repository.FindTextByKey(Arg.Any<string>()).Returns(default(LocalizedText));
 
         // Act
         var result = _subject[dateTime];
@@ -91,7 +92,7 @@ public class TextLocalizerTests {
         var dateTime = new DateTime(2021, 09, 23);
         var expectedPattern = new LocalizedText(GetDateTimeFormatKey(format), useCustomFormat ? "M/d/yyyy" : GetDateTimeFormatKey(format));
         var expectedFormattedValue = dateTime.ToString(expectedPattern.Value);
-        _repository.FindText(Arg.Any<string>()).Returns(expectedPattern);
+        _repository.FindTextByKey(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
         var result = _subject[dateTime];
@@ -106,7 +107,7 @@ public class TextLocalizerTests {
         const decimal number = -12.3456m;
         var expectedPattern = new LocalizedText(GetNumberFormatKey(DefaultNumberPattern), "n2");
         const string expectedFormattedValue = "-12.35";
-        _repository.FindText(Arg.Any<string>()).Returns(expectedPattern);
+        _repository.FindTextByKey(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
         var result = _subject[number];
@@ -121,7 +122,7 @@ public class TextLocalizerTests {
         const decimal number = -12.345m;
         var expectedPattern = new LocalizedText(GetNumberFormatKey(DefaultNumberPattern), "n4");
         var expectedFormattedValue = number.ToString(expectedPattern.Value);
-        _repository.FindText(Arg.Any<string>()).Returns(expectedPattern);
+        _repository.FindTextByKey(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
         var result = _subject[number, 4];
@@ -144,7 +145,7 @@ public class TextLocalizerTests {
         const decimal number = -12.345m;
         var expectedPattern = new LocalizedText(GetNumberFormatKey(format), useCustomFormat ? "p2" : GetNumberFormatKey(format));
         var expectedFormattedValue = number.ToString(expectedPattern.Value);
-        _repository.FindText(Arg.Any<string>()).Returns(expectedPattern);
+        _repository.FindTextByKey(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
         var result = _subject[number, format];
@@ -187,7 +188,7 @@ public class TextLocalizerTests {
         const decimal number = -12.345m;
         var expectedPattern = new LocalizedText(GetNumberFormatKey(format), GetNumberFormatKey(CurrencyPattern));
         var expectedFormattedValue = number.ToString(expectedPattern.Value);
-        _repository.FindText(Arg.Any<string>()).Returns(expectedPattern);
+        _repository.FindTextByKey(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
         var result = _subject[number, format, decimalPlaces];
@@ -202,7 +203,7 @@ public class TextLocalizerTests {
         const int number = -42;
         var expectedPattern = new LocalizedText(GetNumberFormatKey(DefaultNumberPattern), "n0");
         var expectedFormattedValue = number.ToString(expectedPattern.Value);
-        _repository.FindText(Arg.Any<string>()).Returns(expectedPattern);
+        _repository.FindTextByKey(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
         var result = _subject[number];
@@ -225,7 +226,7 @@ public class TextLocalizerTests {
         const int number = -42;
         var expectedPattern = new LocalizedText(GetNumberFormatKey(format), useCustomFormat ? "n0" : GetNumberFormatKey(format));
         var expectedFormattedValue = number.ToString(expectedPattern.Value);
-        _repository.FindText(Arg.Any<string>()).Returns(expectedPattern);
+        _repository.FindTextByKey(Arg.Any<string>()).Returns(expectedPattern);
 
         // Act
         var result = _subject[number, format];

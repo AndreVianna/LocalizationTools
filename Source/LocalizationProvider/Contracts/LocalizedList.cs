@@ -1,4 +1,6 @@
 ﻿namespace LocalizationProvider.Contracts;
 
 public record LocalizedList(string Key, LocalizedText[] Items)
-    : ILocalizedResource;
+    : ILocalizedResource<LocalizedList> {
+    public static ResourceType Type => ResourceType.List;
+}

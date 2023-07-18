@@ -2,7 +2,7 @@
 
 namespace LocalizationProvider.PostgreSql;
 
-public sealed partial class PostgreSqlLocalizationRepository : IApplicationRepository {
+internal partial class PostgreSqlLocalizationRepository {
     public DomainApplication? FindApplicationById(Guid id)
         => _dbContext.Applications
                      .AsNoTracking()

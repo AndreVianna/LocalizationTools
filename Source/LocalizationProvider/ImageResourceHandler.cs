@@ -3,15 +3,14 @@
 namespace LocalizationProvider;
 
 internal class ImageResourceHandler
-    : Localizer<ImageResourceHandler>
-    , IImageLocalizer
+    : ResourceHandler<ImageResourceHandler>
     , IImageResourceHandler {
-    internal ImageResourceHandler(IResourceReader reader, ILogger<ImageResourceHandler> logger)
-        : base(reader, logger) { }
+    internal ImageResourceHandler(IResourceRepository repository, ILogger<ImageResourceHandler> logger)
+        : base(repository, logger) { }
 
-    public LocalizedImage? GetLocalizedImage(string imageKey)
-        => GetResourceOrDefault(imageKey, Image, rdr => rdr.FindImage(imageKey));
+    public LocalizedImage? Get(string imageKey)
+        => GetResourceOrDefault(imageKey, rdr => rdr.FindImageByKey(imageKey));
 
-    public byte[]? this[string imageKey]
-        => GetLocalizedImage(imageKey)?.Bytes;
+    public void Set(LocalizedImage resource)
+        => SetResource(resource, wtr => wtr.AddOrUpdateImage(resource));
 }

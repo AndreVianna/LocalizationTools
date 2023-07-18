@@ -3,15 +3,7 @@ using DomainApplication = LocalizationProvider.Contracts.Application;
 
 namespace LocalizationProvider.PostgreSql;
 
-public sealed partial class PostgreSqlLocalizationProviderTests {
-    private static readonly Guid _defaultApplicationId = Guid.NewGuid();
-    private static readonly Application _application = new() {
-        Id = _defaultApplicationId,
-        DefaultCulture = "en-CA",
-        Name = "SomeApplication",
-        AvailableCultures = new[] { "en-CA", "fr-CA" },
-    };
-
+public sealed partial class PostgreSqlResourceRepositoryTests {
     private void SeedApplication(Application? application = null) {
         _dbContext.Applications.Add(application ?? _application);
         _dbContext.SaveChanges();
