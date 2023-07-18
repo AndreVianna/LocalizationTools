@@ -23,7 +23,7 @@ public sealed partial class PostgreSqlResourceRepositoryTests : IDisposable {
         SeedApplication();
 
         var options = new LocalizationRepositoryOptions { ApplicationId = _application.Id };
-        var factory = new PostgreSqlLocalizationLocalizationRepositoryFactory(_dbContext, options);
+        var factory = new PostgreSqlLocalizationRepositoryFactory(_dbContext, options);
         _repository = factory.CreateFor("en-CA");
     }
 

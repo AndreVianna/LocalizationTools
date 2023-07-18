@@ -12,7 +12,7 @@ public sealed class PostgreSqlRepositoryFactoryTests : IDisposable {
     };
 
     private readonly LocalizationDbContext _dbContext;
-    private readonly PostgreSqlLocalizationLocalizationRepositoryFactory _factory;
+    private readonly PostgreSqlLocalizationRepositoryFactory _factory;
 
     public PostgreSqlRepositoryFactoryTests() {
         var builder = new DbContextOptionsBuilder<LocalizationDbContext>();
@@ -27,7 +27,7 @@ public sealed class PostgreSqlRepositoryFactoryTests : IDisposable {
 
     public void Dispose() => _dbContext.Dispose();
 
-    private PostgreSqlLocalizationLocalizationRepositoryFactory CreateFactory(Guid applicationId) {
+    private PostgreSqlLocalizationRepositoryFactory CreateFactory(Guid applicationId) {
         var options = new LocalizationRepositoryOptions { ApplicationId = applicationId };
         return new(_dbContext, options);
     }

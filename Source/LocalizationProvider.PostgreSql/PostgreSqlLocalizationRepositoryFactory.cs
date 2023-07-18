@@ -2,12 +2,12 @@
 
 namespace LocalizationProvider.PostgreSql;
 
-internal sealed class PostgreSqlLocalizationLocalizationRepositoryFactory : ILocalizationRepositoryFactory {
+internal sealed class PostgreSqlLocalizationRepositoryFactory : ILocalizationRepositoryFactory {
     private readonly Application _application;
     private readonly LocalizationDbContext _dbContext;
     private static readonly ConcurrentDictionary<Guid, Application> _applications = new();
 
-    public PostgreSqlLocalizationLocalizationRepositoryFactory(LocalizationDbContext dbContext, LocalizationRepositoryOptions options) {
+    public PostgreSqlLocalizationRepositoryFactory(LocalizationDbContext dbContext, LocalizationRepositoryOptions options) {
         _dbContext = dbContext;
         _application = _applications.GetOrAdd(options.ApplicationId, id
             => _dbContext.Applications.FirstOrDefault(a => a.Id == id)
