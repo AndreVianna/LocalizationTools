@@ -15,7 +15,7 @@ public class ListLocalizerTests {
         loggerFactory.CreateLogger(Arg.Any<string>()).Returns(_logger);
 
         var factory = new LocalizerFactory(provider, loggerFactory);
-        _subject = factory.CreateListLocalizer("en-US");
+        _subject = factory.CreateListLocalizer("en-CA");
     }
 
     [Fact]

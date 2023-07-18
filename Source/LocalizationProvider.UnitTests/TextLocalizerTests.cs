@@ -11,7 +11,7 @@ public class TextLocalizerTests {
         provider.AsReader(Arg.Any<string>()).Returns(_handler);
         _logger = Substitute.For<ILogger<TextLocalizer>>();
         var factory = new LocalizerFactory(provider, _logger.CreateFactory());
-        _subject = factory.CreateTextLocalizer("en-US");
+        _subject = factory.CreateTextLocalizer("en-CA");
     }
 
     [Fact]

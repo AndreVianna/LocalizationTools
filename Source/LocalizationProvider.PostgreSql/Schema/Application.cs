@@ -4,7 +4,7 @@ namespace LocalizationProvider.PostgreSql.Schema;
 
 [EntityTypeConfiguration(typeof(Application))]
 public class Application : IEntityTypeConfiguration<Application> {
-    public required Guid Id { get; set; }
+    public Guid Id { get; set; }
     public required string Name { get; set; }
     public required string DefaultCulture { get; set; }
     public required string[] AvailableCultures { get; set; }

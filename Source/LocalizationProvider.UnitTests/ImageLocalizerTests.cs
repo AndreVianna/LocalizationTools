@@ -15,7 +15,7 @@ public class ImageLocalizerTests {
         loggerFactory.CreateLogger(Arg.Any<string>()).Returns(_logger);
 
         var factory = new LocalizerFactory(provider, loggerFactory);
-        _subject = factory.CreateImageLocalizer("en-US");
+        _subject = factory.CreateImageLocalizer("en-CA");
     }
 
     [Fact]

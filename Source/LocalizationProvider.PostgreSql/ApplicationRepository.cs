@@ -15,7 +15,8 @@ public sealed partial class PostgreSqlLocalizationProvider {
     public IEnumerable<DomainApplication> ListApplications()
         => _dbContext.Applications
                      .AsNoTracking()
-                     .Select(i => i.MapTo());
+                     .Select(i => i.MapTo())
+                     .ToArray();
 
     public bool AddApplication(DomainApplication application) {
         var entity = _dbContext.Applications
@@ -36,5 +37,13 @@ public sealed partial class PostgreSqlLocalizationProvider {
         _dbContext.SaveChanges();
         application.UpdateFrom(entity);
         return true;
+    }
+
+    public void RemoveApplication(Guid id) {
+        var entity = _dbContext.Applications
+            .FirstOrDefault(i => i.Id == id);
+        if (entity == null) return;
+        _dbContext.Applications.Remove(entity);
+        _dbContext.SaveChanges();
     }
 }

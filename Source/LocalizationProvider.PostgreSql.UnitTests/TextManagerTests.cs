@@ -63,7 +63,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
                   .Add(new() {
                       Key = key,
                       ApplicationId = _application.Id,
-                      Culture = "en-US",
+                      Culture = _application.DefaultCulture,
                       Value = value,
                   });
         _dbContext.SaveChanges();

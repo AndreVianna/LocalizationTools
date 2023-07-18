@@ -13,10 +13,10 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     [Fact]
     public void FindList_ReturnsListItems_WhenListExists() {
         // Arrange
-        SeedList("List_key", 2);
+        SeedList("list_key", 2);
 
         // Act
-        var result = _provider.FindList("List_key");
+        var result = _provider.FindList("list_key");
 
         // Assert
         var subject = result.Should().BeOfType<LocalizedList>().Subject;
@@ -65,14 +65,14 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
                   .Add(new() {
                       Key = key,
                       ApplicationId = _application.Id,
-                      Culture = "en-US",
+                      Culture = _application.DefaultCulture,
                       Items = Enumerable
                               .Range(0, itemCount)
                               .Select(i => new ListItem {
                                   Index = i,
                                   Text = new() {
                                       ApplicationId = _application.Id,
-                                      Culture = "en-US",
+                                      Culture = _application.DefaultCulture,
                                       Key = $"item{i + 1}_key",
                                       Value = $"Item {i + 1}"
                                   },

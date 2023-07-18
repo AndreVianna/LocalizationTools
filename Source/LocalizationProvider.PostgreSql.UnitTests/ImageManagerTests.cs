@@ -13,10 +13,10 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     [Fact]
     public void FindImage_ReturnsImageByteArray_WhenImageExists() {
         // Arrange
-        SeedImage("image_key", new byte[] { 1, 2, 3, 4 });
+        SeedImage("Image_key", new byte[] { 1, 2, 3, 4 });
 
         // Act
-        var result = _provider.FindImage("image_key");
+        var result = _provider.FindImage("Image_key");
 
         // Assert
         var subject = result.Should().BeOfType<LocalizedImage>().Subject;
@@ -26,8 +26,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
     [Fact]
     public void SetImage_AddsLocalizedImage() {
         const string key = "newImage_key";
-        var input = new LocalizedImage(key,
-                                       new byte[] { 1, 2, 3, 4 });
+        var input = new LocalizedImage(key, new byte[] { 1, 2, 3, 4 });
         // Act
         _provider.SetImage(input);
 
@@ -56,7 +55,7 @@ public sealed partial class PostgreSqlLocalizationProviderTests {
                   .Add(new() {
                       Key = key,
                       ApplicationId = _application.Id,
-                      Culture = "en-US",
+                      Culture = _application.DefaultCulture,
                       Bytes = bytes,
                   });
         _dbContext.SaveChanges();
