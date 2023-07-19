@@ -33,7 +33,7 @@ internal abstract class ResourceHandler<THandler>
             setResource(_repository);
         }
         catch (Exception ex) {
-            _logger.LogFailToSetResource(ex, ILocalizedResource<TResource>.Type, resource);
+            _logger.LogFailToSetResource(ex, ILocalizedResource<TResource>.Type, resource.Key);
             throw;
         }
     }

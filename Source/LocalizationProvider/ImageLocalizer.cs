@@ -1,11 +1,11 @@
 ﻿namespace LocalizationProvider;
 
-internal class ImageLocalizer : IImageLocalizer {
-    private readonly IImageResourceHandler _handler;
+internal class ImageLocalizer : ITypedLocalizer {
+    private readonly ImageResourceHandler _handler;
 
     public static ResourceType Type => ResourceType.Image;
 
-    public ImageLocalizer(IImageResourceHandler handler) {
+    public ImageLocalizer(ImageResourceHandler handler) {
         _handler = handler;
     }
 

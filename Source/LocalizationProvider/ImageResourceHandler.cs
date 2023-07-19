@@ -1,10 +1,7 @@
-﻿using static LocalizationProvider.Models.ResourceType;
-
-namespace LocalizationProvider;
+﻿namespace LocalizationProvider;
 
 internal class ImageResourceHandler
-    : ResourceHandler<ImageResourceHandler>
-    , IImageResourceHandler {
+    : ResourceHandler<ImageResourceHandler> {
     internal ImageResourceHandler(IResourceRepository repository, ILogger<ImageResourceHandler> logger)
         : base(repository, logger) { }
 

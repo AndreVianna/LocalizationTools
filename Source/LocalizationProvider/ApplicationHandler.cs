@@ -1,6 +1,4 @@
-﻿using System.Results;
-
-namespace LocalizationProvider; 
+﻿namespace LocalizationProvider; 
 
 internal class ApplicationHandler {
     private readonly IApplicationRepository _repository;
@@ -12,8 +10,9 @@ internal class ApplicationHandler {
     public CrudResult<IEnumerable<Application>> ListApplications()
         => _repository.ListApplications().ToArray();
 
-    public CrudResult<Application?> FindApplicationById(Guid id)
-        => _repository.FindApplicationById(id);
+    public CrudResult<Application> FindApplicationById(Guid id)
+        => _repository.FindApplicationById(id)
+        ?? CrudResult.NotFound<Application>();
 
     public CrudResult<Application> AddApplication(Application application) {
         var result = application.Validate();

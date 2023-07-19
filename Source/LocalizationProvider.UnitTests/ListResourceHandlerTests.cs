@@ -1,111 +1,76 @@
-namespace LocalizationProvider;
+﻿namespace LocalizationProvider;
 
 public class ListResourceHandlerTests {
     private readonly ILocalizationRepository _repository;
+    private readonly ListResourceHandler _subject;
     private readonly ILogger<ListResourceHandler> _logger;
-    private readonly IListLocalizer _subject;
 
     public ListResourceHandlerTests() {
-        var provider = Substitute.For<ILocalizationRepositoryFactory>();
         _repository = Substitute.For<ILocalizationRepository>();
-        provider.CreateFor(Arg.Any<string>()).Returns(_repository);
-        var loggerFactory = Substitute.For<ILoggerFactory>();
         _logger = Substitute.For<ILogger<ListResourceHandler>>();
         _logger.IsEnabled(Arg.Any<LogLevel>()).Returns(true);
-        loggerFactory.CreateLogger(Arg.Any<string>()).Returns(_logger);
-
-        var factory = new LocalizerFactory(provider, loggerFactory);
-        _subject = factory.Create<ListLocalizer>("en-CA");
+        _subject = new ListResourceHandler(_repository, _logger);
     }
 
     [Fact]
-    public void Indexer_WithListKey_ReturnsExpectedList() {
+    public void Get_WithListKey_ReturnsExpectedList() {
         // Arrange
         var list = CreateLocalizedList();
-        var expectedResult = list.Items.Select(i => i.Value ?? i.Key).ToArray();
         _repository.FindListByKey(Arg.Any<string>()).Returns(list);
 
         // Act
-        var result = _subject[list.Key];
+        var result = _subject.Get(list.Key);
 
         // Assert
-        result.Should().BeEquivalentTo(expectedResult);
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(list);
     }
 
     [Fact]
-    public void Indexer_WithFaultyReader_Throws_AndLogsError() {
+    public void Get_WhenListNotFound_ReturnsExpectedList() {
         // Arrange
-        const string listKey = "list_key";
-        _repository.FindListByKey(Arg.Any<string>()).Throws(new InvalidOperationException("Some message."));
-
-        // Act
-        Action action = () => _ = _subject[listKey];
-
-        // Assert
-        action.Should().Throw<InvalidOperationException>().WithMessage("Some message.");
-        _logger.ShouldContain(LogLevel.Error, "An error has occurred while getting a localized List with key 'list_key'.", new(2, nameof(Extensions.LoggerExtensions.LogFailToGetResource)));
-    }
-
-    [Fact]
-    public void Indexer_WithListKey_WhenKeyNotFound_ReturnsEmptyList_AndLogsWarning() {
-        // Arrange
-        const string listKey = "list_key";
         _repository.FindListByKey(Arg.Any<string>()).Returns(default(LocalizedList));
 
         // Act
-        var result = _subject[listKey];
+        var result = _subject.Get("invalid");
 
         // Assert
-        result.Should().BeEmpty();
-        _logger.ShouldContain(LogLevel.Warning, "A localized List with key 'list_key' was not found.", new(1, nameof(Extensions.LoggerExtensions.LogResourceNotFound)));
+        result.Should().BeNull();
     }
 
     [Fact]
-    public void Indexer_ListKey_AndItemKey_ReturnsItemValue() {
+    public void Set_WithLocalizedList_SetsList() {
         // Arrange
         var list = CreateLocalizedList();
-        _repository.FindListByKey(Arg.Any<string>()).Returns(list);
 
         // Act
-        var result = _subject[list.Key, list.Items[0].Key];
+        _subject.Set(list);
 
         // Assert
-        result.Should().Be(list.Items[0].Value);
+        _repository.Received(1).AddOrUpdateList(list);
     }
 
     [Fact]
-    public void Indexer_ListKey_AndItemKey_WhenItemHasNoValue_ReturnsItemKey() {
+    public void Set_WhenRepositoryThrowsException_ThrowsException() {
         // Arrange
         var list = CreateLocalizedList();
-        _repository.FindListByKey(Arg.Any<string>()).Returns(list);
+        _repository.When(r => r.AddOrUpdateList(Arg.Any<LocalizedList>())).Throw(new Exception());
 
         // Act
-        var result = _subject[list.Key, list.Items[1].Key];
+        var action = () => _subject.Set(list);
 
         // Assert
-        result.Should().Be(list.Items[1].Key);
-    }
-
-    [Fact]
-    public void Indexer_ListKey_AndItemKey_WhenListNotFound_ReturnsItemKey() {
-        // Arrange
-        const string listKey = "list_key";
-        const string itemKey = "item_key";
-        _repository.FindListByKey(Arg.Any<string>()).Returns(default(LocalizedList));
-
-        // Act
-        var result = _subject[listKey, itemKey];
-
-        // Assert
-        result.Should().Be(itemKey);
+        action.Should().Throw<Exception>();
+        _logger.ShouldContain(LogLevel.Error, "An error has occurred while setting a localized List for key 'list_key'.", new(3, nameof(Extensions.LoggerExtensions.LogFailToSetResource)));
     }
 
     private static LocalizedList CreateLocalizedList() {
-        var items = new[] {
-            new LocalizedText("item_1", "Item 1"),
-            new LocalizedText("item_2", null)
+        var items = new LocalizedText[] {
+            new("item1_Key", "Item 1"),
+            new("item2_Key", "Item 2"),
+            new("item3_Key", "Item 3"),
         };
-
         return new("list_key", items);
     }
 }
+

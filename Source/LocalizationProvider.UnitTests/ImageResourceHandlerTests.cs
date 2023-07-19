@@ -1,49 +1,67 @@
-namespace LocalizationProvider;
+﻿namespace LocalizationProvider;
 
 public class ImageResourceHandlerTests {
     private readonly ILocalizationRepository _repository;
+    private readonly ImageResourceHandler _subject;
     private readonly ILogger<ImageResourceHandler> _logger;
-    private readonly IImageLocalizer _subject;
 
     public ImageResourceHandlerTests() {
-        var provider = Substitute.For<ILocalizationRepositoryFactory>();
         _repository = Substitute.For<ILocalizationRepository>();
-        provider.CreateFor(Arg.Any<string>()).Returns(_repository);
-        var loggerFactory = Substitute.For<ILoggerFactory>();
         _logger = Substitute.For<ILogger<ImageResourceHandler>>();
         _logger.IsEnabled(Arg.Any<LogLevel>()).Returns(true);
-        loggerFactory.CreateLogger(Arg.Any<string>()).Returns(_logger);
-
-        var factory = new LocalizerFactory(provider, loggerFactory);
-        _subject = factory.Create<ImageLocalizer>("en-CA");
+        _subject = new ImageResourceHandler(_repository, _logger);
     }
 
     [Fact]
-    public void Indexer_WithImageKey_ReturnsExpectedImage() {
+    public void Get_WithImageKey_ReturnsExpectedImage() {
         // Arrange
         var image = CreateLocalizedImage();
-        var expectedResult = image.Bytes;
         _repository.FindImageByKey(Arg.Any<string>()).Returns(image);
 
         // Act
-        var result = _subject[image.Key];
+        var result = _subject.Get(image.Key);
 
         // Assert
-        result.Should().BeEquivalentTo(expectedResult);
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(image);
     }
 
     [Fact]
-    public void Indexer_WithImageKey_WhenKeyNotFound_ReturnsEmptyImage_AndLogsWarning() {
+    public void Get_WhenImageNotFound_ReturnsExpectedImage() {
         // Arrange
-        const string imageKey = "image_key";
         _repository.FindImageByKey(Arg.Any<string>()).Returns(default(LocalizedImage));
 
         // Act
-        var result = _subject[imageKey];
+        var result = _subject.Get("invalid");
 
         // Assert
         result.Should().BeNull();
-        _logger.ShouldContain(LogLevel.Warning, "A localized Image with key 'image_key' was not found.", new(1, nameof(Extensions.LoggerExtensions.LogResourceNotFound)));
+    }
+
+    [Fact]
+    public void Set_WithLocalizedImage_SetsImage() {
+        // Arrange
+        var image = CreateLocalizedImage();
+
+        // Act
+        _subject.Set(image);
+
+        // Assert
+        _repository.Received(1).AddOrUpdateImage(image);
+    }
+
+    [Fact]
+    public void Set_WhenRepositoryThrowsException_ThrowsException() {
+        // Arrange
+        var image = CreateLocalizedImage();
+        _repository.When(r => r.AddOrUpdateImage(Arg.Any<LocalizedImage>())).Throw(new Exception());
+
+        // Act
+        var action = () => _subject.Set(image);
+
+        // Assert
+        action.Should().Throw<Exception>();
+        _logger.ShouldContain(LogLevel.Error, "An error has occurred while setting a localized Image for key 'image_key'.", new(3, nameof(Extensions.LoggerExtensions.LogFailToSetResource)));
     }
 
     private static LocalizedImage CreateLocalizedImage() {

@@ -8,4 +8,7 @@ internal sealed class ListResourceHandler
 
     public LocalizedList? Get(string lisKey)
         => GetResourceOrDefault(lisKey, rdr => rdr.FindListByKey(lisKey));
+
+    public void Set(LocalizedList resource)
+        => SetResource(resource, wtr => wtr.AddOrUpdateList(resource));
 }

@@ -14,11 +14,8 @@ internal sealed class PostgreSqlLocalizationRepositoryFactory : ILocalizationRep
             ?? throw new NotSupportedException($"An application with id '{id}' was not found."));
     }
 
-    public ILocalizationRepository CreateFor(string culture) {
-        if (!_application.AvailableCultures.Contains(culture)) {
-            throw new NotSupportedException($"Culture '{culture}' is not available for application '{_application.Name}'.");
-        }
-
-        return new PostgreSqlLocalizationRepository(_dbContext, _application, culture);
-    }
+    public ILocalizationRepository CreateFor(string culture)
+        => _application.AvailableCultures.Contains(culture)
+            ? new PostgreSqlLocalizationRepository(_dbContext, _application, culture)
+            : throw new NotSupportedException($"Culture '{culture}' is not available for application '{_application.Name}'.");
 }

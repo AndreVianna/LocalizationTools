@@ -1,11 +1,11 @@
 ﻿namespace LocalizationProvider;
 
-internal sealed class ListLocalizer : IListLocalizer {
-    private readonly IListResourceHandler _handler;
+internal sealed class ListLocalizer : ITypedLocalizer {
+    private readonly ListResourceHandler _handler;
 
     public static ResourceType Type => ResourceType.List;
 
-    public ListLocalizer(IListResourceHandler handler) {
+    public ListLocalizer(ListResourceHandler handler) {
         _handler = handler;
     }
 

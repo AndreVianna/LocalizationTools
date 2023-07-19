@@ -8,4 +8,7 @@ internal sealed class TextResourceHandler
 
     public LocalizedText? Get(string textKey)
         => GetResourceOrDefault(textKey, rdr => rdr.FindTextByKey(textKey));
+
+    public void Set(LocalizedText resource)
+        => SetResource(resource, wtr => wtr.AddOrUpdateText(resource));
 }

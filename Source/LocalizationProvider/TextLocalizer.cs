@@ -1,11 +1,11 @@
 ﻿namespace LocalizationProvider;
 
-internal sealed class TextLocalizer : ITextLocalizer {
-    private readonly ITextResourceHandler _handler;
+internal sealed class TextLocalizer : ITypedLocalizer {
+    private readonly TextResourceHandler _handler;
 
     public static ResourceType Type => ResourceType.Text;
 
-    internal TextLocalizer(ITextResourceHandler handler) {
+    internal TextLocalizer(TextResourceHandler handler) {
         _handler = handler;
     }
 

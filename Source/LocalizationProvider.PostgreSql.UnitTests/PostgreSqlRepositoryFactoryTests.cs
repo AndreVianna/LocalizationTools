@@ -47,7 +47,7 @@ public sealed class PostgreSqlRepositoryFactoryTests : IDisposable {
 
         // Assert
         act.Should().Throw<NotSupportedException>()
-            .WithMessage($"Application with id '{invalidId}' not found.");
+            .WithMessage($"An Application with id '{invalidId}' was not found.");
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public sealed class PostgreSqlRepositoryFactoryTests : IDisposable {
         var result = _factory.CreateFor("en-CA");
 
         // Assert
-        result.Should().BeSameAs(_factory);
+        result.Should().BeOfType<PostgreSqlLocalizationRepository>();
     }
 
     [Fact]

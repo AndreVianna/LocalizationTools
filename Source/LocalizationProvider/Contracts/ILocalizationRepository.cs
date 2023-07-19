@@ -2,4 +2,4 @@
 
 public interface ILocalizationRepository 
     : IResourceRepository
-        , IApplicationRepository { }
+    , IApplicationRepository { }
