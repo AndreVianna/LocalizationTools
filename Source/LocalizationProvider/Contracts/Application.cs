@@ -40,5 +40,4 @@ public class Application : IValidatable {
             result += new ValidationError($"{nameof(AvailableCultures)} cannot contain a null or empty item. Found '[{string.Join(", ", AvailableCultures.Select(i => string.IsNullOrWhiteSpace(i) ? "<Empty>" : i))}]'.", nameof(AvailableCultures));
         return result;
     }
-
 }
