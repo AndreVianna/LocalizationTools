@@ -1,5 +1,5 @@
 ﻿namespace LocalizationProvider.Contracts;
 
-public interface ILocalizationRepository 
+public interface ILocalizationRepository
     : IResourceRepository
     , IApplicationRepository { }

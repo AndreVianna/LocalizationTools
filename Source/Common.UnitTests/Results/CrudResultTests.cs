@@ -9,7 +9,7 @@ public class CrudResultTests {
     private static readonly CrudResult _invalidWithWithOtherError = new ValidationError("Other error.", "Source");
 
     private static readonly CrudResult<string> _successWithValue = CrudResult.Success("Value");
-    private static readonly CrudResult<string> _notFoundWithValue = CrudResult.NotFound("Value");
+    private static readonly CrudResult<string> _notFoundWithValue = CrudResult.NotFound<string>();
     private static readonly CrudResult<string> _conflictWithValue = CrudResult.Conflict("Value");
     private static readonly CrudResult<string> _invalidWithValue = CrudResult.Invalid("Value", "Some error.", "Source");
 
@@ -40,16 +40,6 @@ public class CrudResultTests {
         result.IsSuccess.Should().BeFalse();
     }
 
-    [Fact]
-    public void ImplicitConversion_FromValue_ReturnsSuccess() {
-        // Act
-        CrudResult<string> subject = "Value";
-
-        // Assert
-        subject.Value.Should().Be("Value");
-        subject.IsSuccess.Should().BeTrue();
-    }
-
     private class TestDataForProperties : TheoryData<CrudResult, bool, bool, bool, bool> {
         public TestDataForProperties() {
             Add(_invalid, true, false, false, false);
@@ -68,14 +58,8 @@ public class CrudResultTests {
         // Assert
         subject.IsInvalid.Should().Be(isInvalid);
         subject.IsSuccess.Should().Be(isSuccess);
-        if (isInvalid) {
-            subject.Invoking(x => x.IsNotFound).Should().Throw<InvalidOperationException>();
-            subject.Invoking(x => x.IsConflict).Should().Throw<InvalidOperationException>();
-        }
-        else {
-            subject.IsNotFound.Should().Be(isNotFound);
-            subject.IsConflict.Should().Be(isConflict);
-        }
+        subject.WasNotFound.Should().Be(isNotFound);
+        subject.HasConflict.Should().Be(isConflict);
     }
 
     private class TestDataForEquality : TheoryData<CrudResult, CrudResult?, bool> {
@@ -202,6 +186,39 @@ public class CrudResultTests {
     }
 
     [Fact]
+    public void ImplicitConversion_FromValue_ReturnsSuccess() {
+        // Act
+        CrudResult<string> subject = "Value";
+
+        // Assert
+        subject.Value.Should().Be("Value");
+        subject.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ImplicitConversion_FromSuccessResult_ReturnsSuccess() {
+        // Act
+        var result = Result.Success("Value");
+        CrudResult<string> subject = result;
+
+        // Assert
+        subject.Value.Should().Be(result.Value);
+        subject.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ImplicitConversion_FromInvalidResult_ReturnsSuccess() {
+        // Act
+        var result = Result.Invalid("Value", "Some error.", "SomeProperty");
+        CrudResult<string> subject = result;
+
+        // Assert
+        subject.Value.Should().Be(result.Value);
+        subject.IsSuccess.Should().BeFalse();
+        subject.Errors.Should().BeEquivalentTo(result.Errors);
+    }
+
+    [Fact]
     public void AddOperator_WithValueAndWithoutError_ReturnsInvalid() {
         // Arrange
         var result = CrudResult.Success("Value");
@@ -230,16 +247,31 @@ public class CrudResultTests {
     }
 
     [Fact]
-    public void MapTo_WithoutError_ReturnsInvalid() {
+    public void MapTo_WithoutError_ReturnsSuccess() {
         // Arrange
         var subject = CrudResult.Success("42");
 
         // Act
-        var result = subject.MapTo(int.Parse!);
+        var result = subject.MapTo(int.Parse);
 
         // Assert
         result.Should().BeOfType<CrudResult<int>>();
         result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public void MapTo_FromNotFound_ReturnsSuccess() {
+        // Arrange
+        var subject = CrudResult.NotFound<string>();
+
+        // Act
+        var result = subject.MapTo(int.Parse);
+
+        // Assert
+        result.Should().BeOfType<CrudResult<int>>();
+        result.IsSuccess.Should().BeFalse();
+        result.IsInvalid.Should().BeFalse();
+        result.WasNotFound.Should().BeTrue();
     }
 
     [Fact]
@@ -248,7 +280,7 @@ public class CrudResultTests {
         var subject = CrudResult.Invalid("42", "Some error.", "Field");
 
         // Act
-        var result = subject.MapTo(int.Parse!);
+        var result = subject.MapTo(int.Parse);
 
         // Assert
         result.Should().BeOfType<CrudResult<int>>();

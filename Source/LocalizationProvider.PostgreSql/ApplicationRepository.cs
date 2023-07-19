@@ -18,7 +18,8 @@ internal partial class PostgreSqlLocalizationRepository {
     public bool AddApplication(DomainApplication application) {
         var entity = _dbContext.Applications
                                .FirstOrDefault(i => i.Id == application.Id);
-        if (entity != null) return false;
+        if (entity != null)
+            return false;
         entity = application.MapTo();
         _dbContext.Applications.Add(entity);
         _dbContext.SaveChanges();
@@ -29,7 +30,8 @@ internal partial class PostgreSqlLocalizationRepository {
     public bool UpdateApplication(DomainApplication application) {
         var entity = _dbContext.Applications
                   .FirstOrDefault(i => i.Id == application.Id);
-        if (entity == null) return false;
+        if (entity == null)
+            return false;
         entity.UpdateFrom(application);
         _dbContext.SaveChanges();
         application.UpdateFrom(entity);
@@ -39,7 +41,8 @@ internal partial class PostgreSqlLocalizationRepository {
     public void RemoveApplication(Guid id) {
         var entity = _dbContext.Applications
             .FirstOrDefault(i => i.Id == id);
-        if (entity == null) return;
+        if (entity == null)
+            return;
         _dbContext.Applications.Remove(entity);
         _dbContext.SaveChanges();
     }

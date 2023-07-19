@@ -37,7 +37,7 @@ public static class Ensure {
     }
 
     [return: NotNull]
-    public static TArgument IsNotNullAndDoesNotHaveNull<TArgument>(TArgument? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
+    public static TArgument IsNotNullAndDoesNotContainNull<TArgument>(TArgument? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
         where TArgument : IEnumerable {
         argument = IsNotNull(argument, paramName);
         return argument switch {
@@ -49,7 +49,7 @@ public static class Ensure {
 
     [return: NotNull]
     [SuppressMessage("Style", "IDE0200:Remove unnecessary lambda expression", Justification = "<Pending>")]
-    public static TArgument IsNotNullAndDoesNotHaveNullOrEmpty<TArgument>(TArgument? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
+    public static TArgument IsNotNullAndDoesNotContainContainOrEmpty<TArgument>(TArgument? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
         where TArgument : IEnumerable<string?> {
         argument = IsNotNull(argument, paramName);
         return argument switch {
@@ -62,7 +62,7 @@ public static class Ensure {
 
     [return: NotNull]
     [SuppressMessage("Style", "IDE0200:Remove unnecessary lambda expression", Justification = "<Pending>")]
-    public static TArgument IsNotNullAndDoesNotHaveNullOrWhiteSpace<TArgument>(TArgument? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
+    public static TArgument IsNotNullAndDoesNotContainNullOrWhiteSpace<TArgument>(TArgument? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
         where TArgument : IEnumerable<string?> {
         argument = IsNotNull(argument, paramName);
         return argument switch {
@@ -74,7 +74,7 @@ public static class Ensure {
     }
 
     [return: NotNull]
-    public static TArgument IsNotNullOrEmptyAndDoesNotHaveNull<TArgument>(TArgument? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
+    public static TArgument IsNotNullOrEmptyAndDoesNotContainNull<TArgument>(TArgument? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
         where TArgument : IEnumerable {
         argument = IsNotNullOrEmpty(argument, paramName);
         return argument switch {
@@ -85,7 +85,7 @@ public static class Ensure {
     }
 
     [return: NotNull]
-    public static TArgument IsNotNullOrEmptyAndDoesNotHaveNullOrEmpty<TArgument>(TArgument? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
+    public static TArgument IsNotNullOrEmptyAndDoesNotContainNullOrEmpty<TArgument>(TArgument? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
         where TArgument : IEnumerable<string?> {
         argument = IsNotNullOrEmpty(argument, paramName);
         return argument switch {
@@ -96,7 +96,7 @@ public static class Ensure {
     }
 
     [return: NotNull]
-    public static TArgument IsNotNullOrEmptyAndDoesNotHaveNullOrWhiteSpace<TArgument>(TArgument? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
+    public static TArgument IsNotNullOrEmptyAndDoesNotContainNullOrWhiteSpace<TArgument>(TArgument? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
         where TArgument : IEnumerable<string?> {
         argument = IsNotNullOrEmpty(argument, paramName);
         return argument switch {
@@ -115,7 +115,7 @@ public static class Ensure {
                     : throw new ArgumentException($"Invalid type of {paramName}[{argumentIndex}] of '{methodName}'. Expected: {typeof(TItem).Name}. Found: {arguments[(int)argumentIndex]!.GetType().Name}.", $"{paramName}[{argumentIndex}]");
 
     public static TItem[] ArgumentsAreAllOfType<TItem>(string methodName, IReadOnlyList<object?> arguments, [CallerArgumentExpression(nameof(arguments))] string? paramName = null) {
-        var list = IsNotNullOrEmptyAndDoesNotHaveNull(arguments, paramName);
+        var list = IsNotNullOrEmptyAndDoesNotContainNull(arguments, paramName);
         for (var index = 0; index < list.Count; index++)
             ArgumentExistsAndIsOfType<TItem>(methodName, arguments, (uint)index, paramName);
 

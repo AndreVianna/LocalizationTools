@@ -8,10 +8,6 @@ public class ResultTests {
     private static readonly Result _invalidWithSameError = Invalid("Some error.", "Source");
     private static readonly Result _invalidWithOtherError = Invalid("Other error.", "Source");
 
-    private static readonly Result<string> _successWithValue = Success("Value");
-    private static readonly Result<string> _successWithNull = Success(default(string));
-    private static readonly Result<string> _invalidWithValue = Invalid("Value", "Some error.", "Source");
-
     [Fact]
     public void ImplicitConversion_FromValidationError_ReturnsFailure() {
         // Act
@@ -51,23 +47,6 @@ public class ResultTests {
         // Assert
         subject.IsInvalid.Should().Be(isInvalid);
         subject.IsSuccess.Should().Be(isSuccess);
-    }
-
-    private class TestDataWithValueForProperties : TheoryData<Result<string>, bool, bool, bool, bool> {
-        public TestDataWithValueForProperties() {
-            Add(_invalidWithValue, true, false, false, false);
-            Add(_successWithNull, false, true, true, false);
-            Add(_successWithValue, false, true, false, true);
-        }
-    }
-    [Theory]
-    [ClassData(typeof(TestDataWithValueForProperties))]
-    public void Properties_WithValue_ShouldReturnAsExpected(Result<string> subject, bool isInvalid, bool isSuccess, bool isNull, bool isNotNull) {
-        // Assert
-        subject.IsInvalid.Should().Be(isInvalid);
-        subject.IsSuccess.Should().Be(isSuccess);
-        subject.IsNull.Should().Be(isNull);
-        subject.IsNotNull.Should().Be(isNotNull);
     }
 
     private class TestDataForEquality : TheoryData<Result, Result?, bool> {
@@ -140,18 +119,6 @@ public class ResultTests {
     }
 
     [Fact]
-    public void AddOperator_WithValue_AndError_ReturnsInvalid() {
-        // Arrange
-        var result = Success("Value");
-
-        // Act
-        result += new ValidationError("Some error.", "result");
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-    }
-
-    [Fact]
     public void ImplicitConversion_FromValue_ReturnsSuccess() {
         // Act
         Result<string> subject = "Value";
@@ -162,12 +129,40 @@ public class ResultTests {
     }
 
     [Fact]
-    public void MapTo_WithoutError_ReturnsInvalid() {
+    public void AddOperator_WithValueAndWithoutError_ReturnsInvalid() {
         // Arrange
-        var subject = Result.Success("42");
+        var result = Success("Value");
 
         // Act
-        var result = subject.MapTo(int.Parse!);
+        result += Success();
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.IsInvalid.Should().BeFalse();
+        result.Value.Should().Be("Value");
+    }
+
+    [Fact]
+    public void AddOperator_WithValueAndWithError_ReturnsInvalid() {
+        // Arrange
+        var result = Success("Value");
+
+        // Act
+        result += new ValidationError("Some error.", "result");
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.IsInvalid.Should().BeTrue();
+        result.Value.Should().Be("Value");
+    }
+
+    [Fact]
+    public void MapTo_WithoutError_ReturnsSuccess() {
+        // Arrange
+        var subject = Success("42");
+
+        // Act
+        var result = subject.MapTo(int.Parse);
 
         // Assert
         result.Should().BeOfType<Result<int>>();
@@ -177,10 +172,10 @@ public class ResultTests {
     [Fact]
     public void MapTo_WithError_ReturnsInvalid() {
         // Arrange
-        var subject = Result.Invalid("42", "Some error.", "Field");
+        var subject = Invalid("42", "Some error.", "Field");
 
         // Act
-        var result = subject.MapTo(int.Parse!);
+        var result = subject.MapTo(int.Parse);
 
         // Assert
         result.Should().BeOfType<Result<int>>();

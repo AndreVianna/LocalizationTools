@@ -1,4 +1,4 @@
-﻿namespace LocalizationProvider; 
+﻿namespace LocalizationProvider;
 
 internal class ApplicationHandler {
     private readonly IApplicationRepository _repository;
@@ -16,7 +16,8 @@ internal class ApplicationHandler {
 
     public CrudResult<Application> AddApplication(Application application) {
         var result = application.Validate();
-        if (result.IsInvalid) return CrudResult.Invalid(application, result.Errors);
+        if (result.IsInvalid)
+            return CrudResult.Invalid(application, result.Errors);
         var isSuccess = _repository.AddApplication(application);
         return isSuccess
             ? application
@@ -25,11 +26,12 @@ internal class ApplicationHandler {
 
     public CrudResult<Application> UpdateApplication(Application application) {
         var result = application.Validate();
-        if (result.IsInvalid) return CrudResult.Invalid(application, result.Errors);
+        if (result.IsInvalid)
+            return CrudResult.Invalid(application, result.Errors);
         var isSuccess = _repository.UpdateApplication(application);
         return isSuccess
             ? application
-            : CrudResult.NotFound(application);
+            : CrudResult.NotFound<Application>();
     }
 
     public CrudResult RemoveApplication(Guid id) {

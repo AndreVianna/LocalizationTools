@@ -81,7 +81,9 @@ public class SignInResultTests {
     [Fact]
     public void ImplicitConversion_FromSuccess_Throws() {
         // Act
-        var action = () => { SignInResult _ = Success; };
+        var action = () => {
+            SignInResult _ = Success;
+        };
 
         // Assert
         action.Should().Throw<InvalidCastException>();
@@ -90,7 +92,9 @@ public class SignInResultTests {
     [Fact]
     public void ImplicitConversion_FromInvalid_Throws() {
         // Act
-        var action = () => { SignInResult _ = Invalid; };
+        var action = () => {
+            SignInResult _ = Invalid;
+        };
 
         // Assert
         action.Should().Throw<InvalidCastException>();
@@ -214,6 +218,7 @@ public class SignInResultTests {
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.IsInvalid.Should().BeFalse();
+        result.Token.Should().Be("SomeToken");
     }
 
     [Fact]
@@ -227,6 +232,7 @@ public class SignInResultTests {
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Errors.Should().HaveCount(1);
+        result.Token.Should().BeNull();
     }
 
     [Fact]

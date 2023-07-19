@@ -1,6 +1,4 @@
-﻿using System.Results;
-
-namespace LocalizationProvider;
+﻿namespace LocalizationProvider;
 
 public class ApplicationHandlerTests {
     private readonly IApplicationRepository _repository;
@@ -57,7 +55,7 @@ public class ApplicationHandlerTests {
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.IsNotFound.Should().BeTrue();
+        result.WasNotFound.Should().BeTrue();
         result.Value.Should().BeNull();
     }
 
@@ -88,7 +86,7 @@ public class ApplicationHandlerTests {
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.IsConflict.Should().BeTrue();
+        result.HasConflict.Should().BeTrue();
         result.Value.Should().Be(application);
     }
 
@@ -196,8 +194,8 @@ public class ApplicationHandlerTests {
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.IsNotFound.Should().BeTrue();
-        result.Value.Should().Be(application);
+        result.WasNotFound.Should().BeTrue();
+        result.Value.Should().BeNull();
     }
 
     // add test for UpdateApplication with invalid name

@@ -14,7 +14,7 @@ public class ValidationErrorTests {
     [Fact]
     public void DefaultConstructor_WithInvalidMessageTemplate_ThrowsArgumentException() {
         //Act
-        var action = () => _ = new ValidationError("   ", "fieldName");
+        var action = () => new ValidationError("   ", "fieldName");
 
         //Assert
         action.Should().Throw<ArgumentException>().WithMessage("'messageTemplate' cannot be empty or whitespace. (Parameter 'messageTemplate')");
@@ -23,7 +23,7 @@ public class ValidationErrorTests {
     [Fact]
     public void Constructor_WithNullField_SetsFieldToNull() {
         //Act
-        var action = () => _ = new ValidationError("Error message", "   ");
+        var action = () => new ValidationError("Error message", "   ");
 
         //Assert
         action.Should().Throw<ArgumentException>().WithMessage("'source' cannot be empty or whitespace. (Parameter 'source')");
