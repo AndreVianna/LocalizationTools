@@ -21,7 +21,7 @@ jobs:
           LANGUAGE: English
           OPENAI_API_ENDPOINT: https://api.openai.com/v1
           MODEL: gpt-4-32k-0613
-          PROMPT: "Please check if there are any confusions erros, irregularities, and application of best practices in the following code diff:"
+          PROMPT: "Please, check if there are any confusions, erros, irregularities, and the use of best practices in the following code diff. Please explain your analysis and propose in a simple and diret way corrections.
           top_p: 1 # https://platform.openai.com/docs/api-reference/chat/create#chat/create-top_p
           temperature: 0.75 # https://platform.openai.com/docs/api-reference/chat/create#chat/create-temperature
           max_tokens: 32768
